@@ -11,7 +11,11 @@ export function LanguageSwitch() {
     setLocale(nextLocale)
     const localizedPath = location.pathname.match(/^\/(fr|en)(\/|$)/)
     if (localizedPath) {
-      navigate(location.pathname.replace(/^\/(fr|en)/, `/${nextLocale}`))
+      navigate({
+        pathname: location.pathname.replace(/^\/(fr|en)/, `/${nextLocale}`),
+        search: location.search,
+        hash: location.hash,
+      })
     }
   }
 

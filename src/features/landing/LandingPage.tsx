@@ -46,7 +46,6 @@ export function LandingPage() {
     <main className="landing-shell">
       <div className="ambient-grid" aria-hidden="true" />
       <header className="landing-header">
-        <span className="monogram" aria-hidden="true">WS</span>
         <LanguageSwitch />
       </header>
 

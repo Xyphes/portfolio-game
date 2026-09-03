@@ -208,3 +208,11 @@ Phaser continues to own sprites, movement, collisions, and spatial interactions,
 The redundant frame-label strip was removed so the canvas begins directly inside its border. The information trigger now sits beside the monogram in the global adventure header, while language and permanent classic-mode access remain grouped on the opposite side. Short desktop landscapes between 500 and 699 px high use a dedicated 720×432 presentation tier; standard and large desktop tiers remain 960×576 and 1440×864.
 
 The miniature map moved from the information drawer to a pointer-transparent, semi-transparent overlay in the upper-right corner of the game. It still derives current, recommended, completed, and pending states from the same `adventureWorld` coordinates and versioned React progression. The fragment beacon moved to the middle-right play area so it remains visible and reachable below the overlay. React owns the map presentation and accessibility label; Phaser still owns the beacon’s spatial interaction.
+
+## Jalon 23 viewport-contained routes
+
+Every top-level route now owns exactly the small viewport height (`100svh`) and prevents document-level overflow. The landing page uses a four-row grid—header, compact hero, flexible mode choices, and proof footer—whose spacing, title scale, card padding, and mobile rows respond to both width and height. The two 44 px mode actions remain present at the 320×568 compact-phone target without requiring document scrolling.
+
+Classic mode uses the same viewport boundary but preserves readable full-length content: its sidebar or mobile header, top bar, and section navigation remain inside the shell, while `.classic-scroll` is the sole vertical scroll container. Hash navigation continues to move that internal reader rather than the browser document. Adventure and route-loading states already used fixed viewport shells and remain unchanged.
+
+The landing header intentionally contains only the language switch. It floats in the upper-right corner instead of consuming a grid row, allowing the identity hero to begin at the top padding on desktop. Mobile layouts reserve the same control height inside the hero to prevent overlap. The redundant `WS` monogram was removed from this route; mode-specific headers retain their own navigation identity.

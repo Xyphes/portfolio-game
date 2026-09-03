@@ -20,6 +20,7 @@ The build verifier checks the PWA identity, required offline documents, deferred
 - Fresh run: verify each beacon is locked before reading, activates after one story, and collects only through proximity plus the action control.
 - Mobile portrait: confirm that the orientation guidance and immediate classic-mode link remain usable.
 - Classic mode at 320 px, tablet, and desktop widths: reach every section, both documents, every contact link, the language switch, and adventure mode.
+- Route containment: at 320×568, 390×844, 1222×575, and 1920×960, confirm the browser document itself never scrolls on landing, classic, adventure, or loading states; only the classic content reader may scroll internally.
 - Screen reader: verify zone announcements, dialogue names/descriptions, focus trapping, Escape dismissal, and focus restoration.
 - Reduced motion: verify that DOM transitions, hero walk cycles, training fades, and zone fades are disabled while movement and gameplay information remain usable.
 - Desktop viewport: confirm the full adventure frame and information trigger fit without page scrolling at 1280×720, 1366×768, and 1920×1080.
