@@ -1,0 +1,67 @@
+import { describe, expect, it, vi } from 'vitest'
+import { AdventureBridge } from './AdventureBridge'
+
+describe('AdventureBridge', () => {
+  it('translates held controls and consumes actions only once', () => {
+    const bridge = new AdventureBridge()
+
+    bridge.setDirection('left', true)
+    bridge.queueAction()
+
+    expect(bridge.isDirectionHeld('left')).toBe(true)
+    expect(bridge.consumeAction()).toBe(true)
+    expect(bridge.consumeAction()).toBe(false)
+
+    bridge.setDirection('left', false)
+    expect(bridge.isDirectionHeld('left')).toBe(false)
+
+    bridge.setRuntimeState({ inputEnabled: false })
+    bridge.setDirection('up', true)
+    bridge.queueAction()
+    expect(bridge.isDirectionHeld('up')).toBe(false)
+    expect(bridge.consumeAction()).toBe(false)
+  })
+
+  it('notifies React-facing listeners and releases state on disposal', () => {
+    const reference = { kind: 'experience', id: 'thales' } as const
+    const bridge = new AdventureBridge({
+      lastScreenId: 'thales-grove',
+      collectedFragmentIds: ['thales-rigor'],
+      discoveredContentKeys: ['experience:thales'],
+    })
+    const listener = vi.fn()
+    const eventListener = vi.fn()
+    bridge.onInteraction(listener)
+    bridge.onEvent(eventListener)
+
+    bridge.emitInteraction(reference)
+    expect(listener).toHaveBeenCalledWith(reference)
+    expect(eventListener).toHaveBeenCalledWith({ type: 'content', reference })
+    expect(bridge.isFragmentCollected('thales-rigor')).toBe(true)
+    expect(bridge.isContentDiscovered(reference)).toBe(true)
+    expect(bridge.getRuntimeState().lastScreenId).toBe('thales-grove')
+
+    bridge.setDirection('up', true)
+    bridge.queueAction()
+    bridge.dispose()
+    bridge.emitInteraction(reference)
+
+    expect(listener).toHaveBeenCalledTimes(1)
+    expect(eventListener).toHaveBeenCalledTimes(1)
+    expect(bridge.isDirectionHeld('up')).toBe(false)
+    expect(bridge.consumeAction()).toBe(false)
+  })
+
+  it('forwards spatial fragment collection through the typed event contract', () => {
+    const bridge = new AdventureBridge()
+    const eventListener = vi.fn()
+    bridge.onEvent(eventListener)
+
+    bridge.emitEvent({ type: 'fragment-collected', fragmentId: 'thales-rigor' })
+
+    expect(eventListener).toHaveBeenCalledWith({
+      type: 'fragment-collected',
+      fragmentId: 'thales-rigor',
+    })
+  })
+})

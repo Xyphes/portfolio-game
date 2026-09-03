@@ -1,0 +1,312 @@
+import { useEffect } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { portfolio } from '../../content/portfolio.data'
+import { getSkillLabel, localize } from '../../content/selectors'
+import { LanguageSwitch } from '../../shared/LanguageSwitch'
+import { normalizeLocale, useLanguage } from '../../shared/language'
+import { usePageMetadata } from '../../shared/usePageMetadata'
+
+const copy = {
+  fr: {
+    mode: 'Mode classique',
+    home: 'Accueil',
+    adventure: 'Passer à l’aventure',
+    about: 'À propos',
+    skills: 'Compétences',
+    languageSkills: 'Langages',
+    frameworks: 'Frameworks',
+    domains: 'Domaines',
+    tools: 'Outils',
+    spokenLanguages: 'Langues',
+    softSkills: 'Compétences humaines',
+    education: 'Études',
+    experiences: 'Expériences',
+    projects: 'Projets',
+    interests: 'En dehors du code',
+    missions: 'Missions sélectionnées',
+    documents: 'Documents',
+    contact: 'Contact',
+    milestone: 'Une source, deux parcours',
+    milestoneText: 'Ces expériences, études et projets sont les mêmes entités que celles découvertes dans le jeu.',
+    metaTitle: 'Willy Somkhit — Ingénieur logiciel | Portfolio',
+  },
+  en: {
+    mode: 'Classic mode',
+    home: 'Home',
+    adventure: 'Switch to adventure',
+    about: 'About',
+    skills: 'Skills',
+    languageSkills: 'Programming languages',
+    frameworks: 'Frameworks',
+    domains: 'Domains',
+    tools: 'Tools',
+    spokenLanguages: 'Languages',
+    softSkills: 'Human skills',
+    education: 'Education',
+    experiences: 'Experience',
+    projects: 'Projects',
+    interests: 'Beyond code',
+    missions: 'Selected assignments',
+    documents: 'Documents',
+    contact: 'Contact',
+    milestone: 'One source, two journeys',
+    milestoneText: 'These experiences, studies, and projects are the same entities discovered in the game.',
+    metaTitle: 'Willy Somkhit — Software Engineer | Portfolio',
+  },
+} as const
+
+export function ClassicPage() {
+  const params = useParams()
+  const routeLocale = normalizeLocale(params.locale)
+  const { locale, setLocale } = useLanguage()
+  const text = copy[routeLocale]
+  const skillGroups = [
+    { id: 'language', label: text.languageSkills },
+    { id: 'framework', label: text.frameworks },
+    { id: 'domain', label: text.domains },
+    { id: 'tool', label: text.tools },
+  ] as const
+  const navigationItems = [
+    { id: 'about', label: text.about },
+    { id: 'skills', label: text.skills },
+    { id: 'education', label: text.education },
+    { id: 'experiences', label: text.experiences },
+    { id: 'projects', label: text.projects },
+    { id: 'interests', label: text.interests },
+    { id: 'documents', label: text.documents },
+    { id: 'contact', label: text.contact },
+  ]
+
+  useEffect(() => {
+    if (locale !== routeLocale) setLocale(routeLocale)
+  }, [locale, routeLocale, setLocale])
+
+  usePageMetadata({
+    locale: routeLocale,
+    title: text.metaTitle,
+    description: localize(portfolio.profile.introduction, routeLocale),
+    canonicalPath: `/${routeLocale}/classic`,
+    alternatePaths: { fr: '/fr/classic', en: '/en/classic' },
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: portfolio.profile.name,
+      jobTitle: localize(portfolio.profile.title, routeLocale),
+      description: localize(portfolio.profile.introduction, routeLocale),
+      sameAs: portfolio.links
+        .filter(({ kind }) => kind === 'github' || kind === 'linkedin')
+        .map(({ href }) => href),
+      knowsAbout: portfolio.skills.map((skill) => localize(skill.label, routeLocale)),
+    },
+  })
+
+  return (
+    <main className="classic-shell">
+      <aside className="classic-sidebar">
+        <Link className="brand-lockup" to="/">
+          <span className="monogram" aria-hidden="true">WS</span>
+          <span>
+            <strong>{portfolio.profile.name}</strong>
+            <small>{localize(portfolio.profile.title, routeLocale)}</small>
+          </span>
+        </Link>
+
+        <nav className="classic-nav" aria-label={routeLocale === 'fr' ? 'Navigation principale' : 'Main navigation'}>
+          {navigationItems.map(({ id, label }) => <a key={id} href={`#${id}`}>{label}</a>)}
+        </nav>
+
+        <div className="sidebar-bottom">
+          <LanguageSwitch />
+          <Link className="mode-switch-link" to={`/${routeLocale}/adventure`}>
+            <span className="tiny-pixels" aria-hidden="true" />
+            {text.adventure}
+          </Link>
+        </div>
+      </aside>
+
+      <section className="classic-content">
+        <header className="classic-topbar">
+          <div>
+            <p className="eyebrow">{text.mode}</p>
+            <p className="breadcrumb">{text.home} / {text.about}</p>
+          </div>
+          <Link className="compact-mode-link" to={`/${routeLocale}/adventure`}>
+            {text.adventure}
+          </Link>
+        </header>
+
+        <nav
+          className="classic-mobile-nav"
+          aria-label={routeLocale === 'fr' ? 'Navigation des sections' : 'Section navigation'}
+        >
+          {navigationItems.map(({ id, label }) => <a key={id} href={`#${id}`}>{label}</a>)}
+        </nav>
+
+        <div className="classic-scroll">
+          <section id="about" className="profile-intro">
+            <p className="section-index">01 — {text.about}</p>
+            <h1>{localize(portfolio.profile.title, routeLocale)}</h1>
+            <p>{localize(portfolio.profile.introduction, routeLocale)}</p>
+            <span className="availability">
+              <i aria-hidden="true" />
+              {localize(portfolio.profile.availability, routeLocale)}
+            </span>
+          </section>
+
+          <section id="skills" className="classic-section">
+            <p className="section-index">02 — {text.skills}</p>
+            <div className="skill-groups">
+              {skillGroups.map((group) => (
+                <div key={group.id}>
+                  <h2>{group.label}</h2>
+                  <div className="skill-list skill-catalog">
+                    {portfolio.skills
+                      .filter(({ category }) => category === group.id)
+                      .map((skill) => (
+                        <span key={skill.id}>{localize(skill.label, routeLocale)}</span>
+                      ))}
+                  </div>
+                </div>
+              ))}
+              <div>
+                <h2>{text.spokenLanguages}</h2>
+                <div className="skill-list skill-catalog">
+                  {portfolio.languages.map((language) => (
+                    <span key={language.id}>
+                      {localize(language.label, routeLocale)} · {localize(language.level, routeLocale)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h2>{text.softSkills}</h2>
+                <div className="skill-list skill-catalog">
+                  {portfolio.softSkills.map((skill) => (
+                    <span key={skill.id}>{localize(skill.label, routeLocale)}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="education" className="classic-section">
+            <p className="section-index">03 — {text.education}</p>
+            <div className="education-grid">
+              {portfolio.education.map((education) => (
+                <article key={education.id} className="content-card">
+                  <h2>{education.institution}</h2>
+                  <p className="card-kicker">{localize(education.program, routeLocale)}</p>
+                  <ul>
+                    {education.highlights.map((highlight) => (
+                      <li key={highlight.fr}>{localize(highlight, routeLocale)}</li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section id="experiences" className="classic-section">
+            <p className="section-index">04 — {text.experiences}</p>
+            <div className="experience-list">
+              {portfolio.experiences.map((experience) => (
+                <article key={experience.id} className="experience-panel">
+                  <div className="experience-heading">
+                    <div>
+                      <h2>{experience.company}</h2>
+                      <p>{localize(experience.role, routeLocale)}</p>
+                    </div>
+                    <span className="period">{localize(experience.period, routeLocale)}</span>
+                  </div>
+                  <p className="experience-summary">{localize(experience.summary, routeLocale)}</p>
+                  <div className="detail-grid">
+                    <div>
+                      <h3>{text.missions}</h3>
+                      <ul>
+                        {experience.missions.map((mission) => (
+                          <li key={mission.fr}>{localize(mission, routeLocale)}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h3>{text.skills}</h3>
+                      <div className="skill-list">
+                        {experience.skillIds.map((skillId) => (
+                          <span key={skillId}>{getSkillLabel(skillId, routeLocale)}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section id="projects" className="classic-section">
+            <p className="section-index">05 — {text.projects}</p>
+            <div className="project-grid">
+              {portfolio.projects.map((project) => (
+                <article key={project.id} className="content-card project-card">
+                  <p className="card-kicker">{localize(project.context, routeLocale)}</p>
+                  <h2>{localize(project.title, routeLocale)}</h2>
+                  <p>{localize(project.summary, routeLocale)}</p>
+                  <div className="skill-list">
+                    {project.skillIds.map((skillId) => (
+                      <span key={skillId}>{getSkillLabel(skillId, routeLocale)}</span>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section id="interests" className="classic-section personal-section">
+            <p className="section-index">06 — {text.interests}</p>
+            <div className="interest-list">
+              {portfolio.interests.map((interest) => (
+                <span key={interest.id}>{localize(interest.label, routeLocale)}</span>
+              ))}
+            </div>
+          </section>
+
+          <section className="proof-callout">
+            <span className="fragment-glyph" aria-hidden="true">◆</span>
+            <div>
+              <strong>{text.milestone}</strong>
+              <p>{text.milestoneText}</p>
+            </div>
+          </section>
+
+          <section id="documents" className="link-section">
+            <p className="section-index">07 — {text.documents}</p>
+            <div className="document-grid">
+              {portfolio.documents.map((document) => (
+                <a key={document.id} href={document.href} download>
+                  <span>{localize(document.label, routeLocale)}</span>
+                  <b aria-hidden="true">↓</b>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <section id="contact" className="link-section">
+            <p className="section-index">08 — {text.contact}</p>
+            <div className="contact-list">
+              {portfolio.links.map((link) => (
+                <a
+                  key={link.kind}
+                  href={link.href}
+                  target={link.kind === 'github' || link.kind === 'linkedin' ? '_blank' : undefined}
+                  rel="noreferrer"
+                >
+                  {localize(link.label, routeLocale)}
+                  <span aria-hidden="true">↗</span>
+                </a>
+              ))}
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  )
+}
