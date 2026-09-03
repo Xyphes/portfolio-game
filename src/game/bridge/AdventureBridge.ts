@@ -2,6 +2,8 @@ import { getContentReferenceKey, type ContentReference } from '../../content/adv
 
 export type Direction = 'up' | 'down' | 'left' | 'right'
 export type InteractionHandler = (reference: ContentReference) => void
+export type PlayerVisual = { x: number; y: number; frame: number; visible: boolean }
+export type PlayerVisualHandler = (visual: PlayerVisual) => void
 export type AdventureEvent =
   | { type: 'content'; reference: ContentReference }
   | { type: 'screen-changed'; screenId: string }
@@ -29,6 +31,8 @@ export class AdventureBridge {
   private readonly heldDirections = new Set<Direction>()
   private readonly interactionHandlers = new Set<InteractionHandler>()
   private readonly eventHandlers = new Set<(event: AdventureEvent) => void>()
+  private readonly playerVisualHandlers = new Set<PlayerVisualHandler>()
+  private playerVisual: PlayerVisual = { x: 240, y: 220, frame: 0, visible: true }
   private actionQueued = false
   private runtimeState: AdventureRuntimeState
 
@@ -53,6 +57,23 @@ export class AdventureBridge {
 
   emitEvent(event: AdventureEvent): void {
     for (const handler of this.eventHandlers) handler(event)
+  }
+
+  onPlayerVisual(handler: PlayerVisualHandler): () => void {
+    this.playerVisualHandlers.add(handler)
+    handler(this.playerVisual)
+    return () => this.playerVisualHandlers.delete(handler)
+  }
+
+  emitPlayerVisual(visual: PlayerVisual): void {
+    if (
+      visual.x === this.playerVisual.x
+      && visual.y === this.playerVisual.y
+      && visual.frame === this.playerVisual.frame
+      && visual.visible === this.playerVisual.visible
+    ) return
+    this.playerVisual = visual
+    for (const handler of this.playerVisualHandlers) handler(visual)
   }
 
   setDirection(direction: Direction, held: boolean): void {
@@ -100,6 +121,7 @@ export class AdventureBridge {
     this.heldDirections.clear()
     this.interactionHandlers.clear()
     this.eventHandlers.clear()
+    this.playerVisualHandlers.clear()
     this.actionQueued = false
   }
 }

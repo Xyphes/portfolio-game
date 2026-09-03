@@ -83,6 +83,7 @@ export function PhaserHost({
     <div className={`game-runtime is-${status}`}>
       <div ref={hostRef} className="phaser-host" role="img" aria-label={copy.world} />
       <AdventureCanvasOverlay
+        bridge={bridge}
         locale={locale}
         screenId={screenId}
         tutorialCompleted={tutorialCompleted}

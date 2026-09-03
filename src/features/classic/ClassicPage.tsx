@@ -26,6 +26,7 @@ const copy = {
     missions: 'Missions sélectionnées',
     documents: 'Documents',
     contact: 'Contact',
+    reader: 'Contenu du portfolio',
     menu: 'Menu',
     closeMenu: 'Fermer le menu',
     milestone: 'Une source, deux parcours',
@@ -51,6 +52,7 @@ const copy = {
     missions: 'Selected assignments',
     documents: 'Documents',
     contact: 'Contact',
+    reader: 'Portfolio content',
     menu: 'Menu',
     closeMenu: 'Close menu',
     milestone: 'One source, two journeys',
@@ -253,7 +255,15 @@ export function ClassicPage() {
           </Link>
         </nav>
 
-        <div ref={contentRef} className="classic-scroll" key={activeSectionId} aria-live="polite">
+        <div
+          ref={contentRef}
+          className="classic-scroll"
+          key={activeSectionId}
+          role="region"
+          tabIndex={0}
+          aria-label={`${text.reader} — ${activeSectionLabel}`}
+          aria-live="polite"
+        >
           {activeSectionId === 'about' && (
             <>
               <section id="about" className="profile-intro">

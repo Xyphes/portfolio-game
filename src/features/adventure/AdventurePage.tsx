@@ -501,8 +501,8 @@ export function AdventurePage() {
                 ))}
               </div>
             </div>
-            <TouchControls bridge={bridge} locale={routeLocale} />
           </div>
+          <TouchControls bridge={bridge} locale={routeLocale} />
         </div>
       </section>
 

@@ -64,4 +64,19 @@ describe('AdventureBridge', () => {
       fragmentId: 'thales-rigor',
     })
   })
+
+  it('shares player visual state with the overlay and releases its observer', () => {
+    const bridge = new AdventureBridge()
+    const visualListener = vi.fn()
+    const unsubscribe = bridge.onPlayerVisual(visualListener)
+
+    expect(visualListener).toHaveBeenCalledWith({ x: 240, y: 220, frame: 0, visible: true })
+    bridge.emitPlayerVisual({ x: 180, y: 120, frame: 6, visible: true })
+    bridge.emitPlayerVisual({ x: 180, y: 120, frame: 6, visible: true })
+    expect(visualListener).toHaveBeenCalledTimes(2)
+
+    unsubscribe()
+    bridge.emitPlayerVisual({ x: 190, y: 120, frame: 6, visible: false })
+    expect(visualListener).toHaveBeenCalledTimes(2)
+  })
 })

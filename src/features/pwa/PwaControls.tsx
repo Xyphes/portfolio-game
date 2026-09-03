@@ -13,6 +13,16 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<InstallChoice>
 }
 
+const INSTALL_DISMISSED_KEY = 'portfolio-game:install-dismissed'
+
+function wasInstallDismissed(): boolean {
+  try {
+    return window.sessionStorage.getItem(INSTALL_DISMISSED_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
 const copy = {
   fr: {
     installReady: 'Installer ce portfolio sur cet appareil.',
@@ -22,6 +32,7 @@ const copy = {
     offlineReady: 'Le mode classique et les documents sont prêts hors ligne. L’aventure est mémorisée après sa première visite.',
     offline: 'Vous êtes hors ligne. La version enregistrée reste disponible.',
     dismiss: 'Masquer',
+    dismissInstall: 'Ne pas installer pour le moment',
   },
   en: {
     installReady: 'Install this portfolio on this device.',
@@ -31,6 +42,7 @@ const copy = {
     offlineReady: 'Classic mode and documents are ready offline. The adventure is saved after its first visit.',
     offline: 'You are offline. The saved version remains available.',
     dismiss: 'Dismiss',
+    dismissInstall: 'Do not install for now',
   },
 } as const
 
@@ -38,6 +50,7 @@ export function PwaControls() {
   const { locale } = useLanguage()
   const text = copy[locale]
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
+  const [installDismissed, setInstallDismissed] = useState(wasInstallDismissed)
   const [online, setOnline] = useState(() => navigator.onLine)
   const {
     offlineReady: [offlineReady, setOfflineReady],
@@ -73,11 +86,20 @@ export function PwaControls() {
     setInstallPrompt(null)
   }
 
+  const dismissInstall = () => {
+    setInstallDismissed(true)
+    try {
+      window.sessionStorage.setItem(INSTALL_DISMISSED_KEY, '1')
+    } catch {
+      // State still hides the optional prompt when storage is unavailable.
+    }
+  }
+
   const noticeKind = getPwaNoticeKind({
     online,
     needRefresh,
     offlineReady,
-    installAvailable: Boolean(installPrompt),
+    installAvailable: Boolean(installPrompt) && !installDismissed,
   })
   const messages = {
     offline: text.offline,
@@ -102,6 +124,17 @@ export function PwaControls() {
         {online && !needRefresh && installPrompt && (
           <button type="button" onClick={() => void install()}>
             {text.install}
+          </button>
+        )}
+        {noticeKind === 'install' && (
+          <button
+            type="button"
+            className="pwa-close"
+            aria-label={text.dismissInstall}
+            title={text.dismissInstall}
+            onClick={dismissInstall}
+          >
+            <span aria-hidden="true">×</span>
           </button>
         )}
         {online && (needRefresh || offlineReady) && (

@@ -99,7 +99,7 @@ The focus behavior is covered in jsdom, while bridge tests continue to verify th
 
 ## Jalon 9 install and offline lifecycle
 
-`PwaControls` is mounted once beside the global audio controls. It captures the browser install prompt without forcing it, exposes an install action only when eligible, reports connectivity changes, and uses the PWA registration lifecycle to offer refresh when a new service worker is waiting. Notices are bilingual, polite, dismissible when appropriate, and absent when no user action is needed.
+`PwaControls` is mounted once beside the global audio controls. It captures the browser install prompt without forcing it, exposes an install action only when eligible, reports connectivity changes, and uses the PWA registration lifecycle to offer refresh when a new service worker is waiting. The optional installation banner has a bilingual accessible close control; dismissal is stored in `sessionStorage`, so it stays hidden during the current browser session without permanently removing a future opportunity to install. Notices are bilingual, polite, dismissible when appropriate, and absent when no user action is needed.
 
 The domain-level notice selector gives offline state priority over update, cache-readiness, and installation messages. This keeps UI policy deterministic and testable without depending on service-worker or browser APIs.
 
@@ -117,7 +117,7 @@ Netlify serves fingerprinted assets immutably while preventing stale HTML and se
 
 ## Jalon 11 responsive and release gates
 
-Classic mode now keeps a sticky, horizontally scrollable section navigation below 800 px instead of removing navigation entirely. The compact header retains the language switch, adventure remains reachable from the top bar, and every mobile navigation target keeps a minimum 44 px activation height.
+Classic mode keeps its full section navigation in the desktop sidebar. Below 800 px, that navigation is available from an accessible burger menu rather than occupying a permanent horizontal row. The compact header retains the current breadcrumb, while language and adventure access remain reachable without enlarging the document.
 
 The production build has an executable verification gate in `scripts/verify-build.mjs`. It validates manifest identity, required document precaching, deferred Phaser and artwork caches, route-chunk existence, the absence of a Phaser reference from the classic chunk, and a 300 KiB uncompressed ceiling for the initial application bundle.
 
@@ -151,7 +151,7 @@ The confirmation flow and storage isolation are covered by component and reposit
 
 Professional and personal branches now share a short three-step loop: reach a zone, discover any one approved story, then walk to the zone beacon and use the action control to claim its fragment. Additional stories remain optional, exits remain unlocked, and the permanent classic-mode link still bypasses gameplay entirely.
 
-The beacon reuses the existing licensed book asset and has three data-driven bilingual states: locked before a discovery, active after the first discovery, and collected. Phaser owns proximity detection and emits a typed `fragment-collected` event; React validates presentation state, persists the fragment, announces success, and triggers the appropriate professional or personal conclusion. Editorial strings remain in the validated adventure content rather than the scene implementation.
+The beacon reuses the existing licensed book asset and has three data-driven states: locked before a discovery, active after the first discovery, and collected. The locked state is deliberately silent because onboarding already explains the loop: it renders no canvas cartouche and emits no interaction notice. Phaser owns proximity detection and emits a typed `fragment-collected` event; React validates presentation state, persists the fragment, announces success, and triggers the appropriate professional or personal conclusion. Editorial strings remain in the validated adventure content rather than the scene implementation.
 
 This replaces the direct fragment button in the React content dialogue and adds a deliberate spatial reward without increasing the world size or introducing failure. Bridge tests cover the new event contract, while manual keyboard and touch playthroughs verify proximity, beacon feedback, and timing.
 
@@ -189,7 +189,7 @@ The normalized pointer velocity and arrival behavior live in a browser-independe
 
 ## Jalon 20 visual scale, spatial layout, and information drawer
 
-The adventure is now the primary full-viewport surface. The permanent left column has become a modal information drawer opened from the game frame; it retains the objective, route recommendation, map, discovery and fragment state, journal, and guide. The drawer disables Phaser input, traps focus, closes with Escape, restores focus to its trigger, and scrolls internally when needed. On fine-pointer desktops, redundant touch controls are hidden; on touch landscapes they remain overlaid on the canvas. The header, frame, and game fit inside one desktop viewport without page scrolling.
+The adventure is now the primary full-viewport surface. The permanent left column has become a modal information drawer opened from the game frame; it retains the objective, route recommendation, map, discovery and fragment state, journal, and guide. The drawer disables Phaser input, traps focus, closes with Escape, restores focus to its trigger, and scrolls internally when needed. The directional and action controls remain visible for every pointer type and occupy the side gutters around the canvas. The header, frame, and game fit inside one viewport without page scrolling.
 
 The logical world grew from 320×192 to 480×288. CSS selects explicit display sizes at supported viewport tiers, Phaser rounds rendered positions, and texture antialiasing stays disabled. This removes the previous arbitrary enlargement while giving the map 50% more logical width and height. Sprites render at their native logical scale, the artificial per-zone tint is gone, and the pack’s original colors remain intact.
 
@@ -213,6 +213,28 @@ The miniature map moved from the information drawer to a pointer-transparent, se
 
 Every top-level route now owns exactly the small viewport height (`100svh`) and prevents document-level overflow. The landing page uses a four-row grid—header, compact hero, flexible mode choices, and proof footer—whose spacing, title scale, card padding, and mobile rows respond to both width and height. The two 44 px mode actions remain present at the 320×568 compact-phone target without requiring document scrolling.
 
-Classic mode uses the same viewport boundary but preserves readable full-length content: its sidebar or mobile header, top bar, and section navigation remain inside the shell, while `.classic-scroll` is the sole vertical scroll container. Hash navigation continues to move that internal reader rather than the browser document. Adventure and route-loading states already used fixed viewport shells and remain unchanged.
+Classic mode uses the same viewport boundary but preserves readable full-length content: its sidebar or mobile header and top bar remain inside the shell, while `.classic-scroll` is the sole vertical scroll container. Choosing a hash-addressable category replaces the content of that internal reader rather than moving the browser document. Adventure and route-loading states already used fixed viewport shells and remain unchanged.
 
 The landing header intentionally contains only the language switch. It floats in the upper-right corner instead of consuming a grid row, allowing the identity hero to begin at the top padding on desktop. Mobile layouts reserve the same control height inside the hero to prevent overlap. The redundant `WS` monogram was removed from this route; mode-specific headers retain their own navigation identity.
+
+## Jalon 24 category workspace and mobile burger
+
+Classic mode is now a category workspace instead of one continuous document. Desktop sidebar controls select one of the eight canonical sections, React renders only that section in the right-hand reader, and selection returns the reader to its top. The active category is reflected by `aria-current`, the breadcrumb, and a shareable URL hash; changing language preserves the selected hash. No portfolio text is duplicated or moved out of the validated content layer.
+
+The right-hand reader remains the only vertical scroll surface, but its scrollbar chrome is hidden across Firefox, Chromium, and legacy Edge while wheel, touch, and keyboard scrolling remain available. This keeps the fixed-viewport shell visually clean without clipping long experience, project, or document content.
+
+Below 800 px, a 44 px burger opens a superposed bilingual category menu with the permanent adventure link. The menu moves focus to its first category, closes by selection, backdrop click, or Escape, and restores focus to its trigger. Component tests protect content replacement, hash state, initial deep links, adventure access, and Escape behavior; responsive visual QA covers desktop and the reliable 500 px Chrome headless viewport.
+
+## Jalon 25 player-over-copy composition
+
+Sharp in-world copy remains a pointer-transparent React overlay, while the character movement and animation remain owned by Phaser. A dedicated typed bridge observer publishes only changed logical position, animation-frame, and transition-visibility values. The overlay writes those values directly to one presentational DOM element, avoiding a React render on every movement frame.
+
+That element reuses the existing transparent hero spritesheet and selects the exact current frame above the copy layer. Only the opaque character pixels cover labels and panels; transparent sprite pixels reveal their original background, eliminating the rectangular floor cutout created by the former mask. The underlying Phaser sprite remains the gameplay reference, while map, touch controls, loading states, and modal interfaces retain their higher HUD priority.
+
+Bridge and overlay tests protect initial visual state, changed-state delivery, duplicate suppression, unsubscription, position conversion, frame selection, and transition visibility. Browser QA confirmed that only the hero silhouette remains visible while crossing the middle of a project label.
+
+## Jalon 26 mobile landscape control gutters
+
+Touch controls now live beside the game frame rather than inside it. In coarse-pointer landscape layouts, the game column becomes a size-query container: the 5:3 frame width is limited by both its available height and a responsive horizontal reserve for the two control gutters. This makes the full lower edge reachable even when mobile browser chrome reduces the small viewport height.
+
+The directional pad is centered in the left gutter and the action button in the right gutter. Their responsive sizes remain independent from Phaser’s 480×288 logical coordinates, while the canvas keeps its aspect ratio, pixel scaling, and centered position. They remain visible on fine-pointer devices as optional click controls; portrait still uses the orientation fallback, and every button retains its pointer-capture and keyboard behavior.

@@ -87,6 +87,7 @@ export async function createAdventureGame({
 
       this.player = this.add.sprite(240, 220, HERO_KEY, 0).setDepth(5)
       this.physics.add.existing(this.player)
+      this.publishPlayerVisual()
 
       const body = this.player.body as Phaser.Physics.Arcade.Body
       body.setCollideWorldBounds(false)
@@ -178,6 +179,7 @@ export async function createAdventureGame({
         this.player.stop()
         this.player.setFrame(this.getIdleFrame())
       }
+      this.publishPlayerVisual()
 
       const keyboardAction = this.actionKeys.some((key) =>
         Phaser.Input.Keyboard.JustDown(key),
@@ -370,10 +372,7 @@ export async function createAdventureGame({
             message: localize(adventureWorld.canvasCopy.fragmentCollected, locale),
           })
         } else if (!this.isFragmentReady(screen)) {
-          bridge.emitEvent({
-            type: 'notice',
-            message: localize(adventureWorld.canvasCopy.fragmentLocked, locale),
-          })
+          return
         } else {
           bridge.emitEvent({ type: 'fragment-collected', fragmentId: screen.fragment.id })
         }
@@ -471,6 +470,7 @@ export async function createAdventureGame({
       this.clearPointerTarget()
       const body = this.player.body as Phaser.Physics.Arcade.Body
       body.setVelocity(0)
+      this.publishPlayerVisual(false)
       if (reducedMotion) {
         this.completeTransition(targetId, direction)
         return
@@ -489,6 +489,7 @@ export async function createAdventureGame({
       bridge.setRuntimeState({ lastScreenId: targetId })
       bridge.emitEvent({ type: 'screen-changed', screenId: targetId })
       this.transitioning = false
+      this.publishPlayerVisual()
     }
 
     private keepPlayerInside(direction: AdventureDirection) {
@@ -520,6 +521,17 @@ export async function createAdventureGame({
         right: 3,
       }
       return idleFrames[this.lastFacing]
+    }
+
+    private publishPlayerVisual(visible = true) {
+      const frameName = this.player.frame.name
+      const parsedFrame = typeof frameName === 'number' ? frameName : Number(frameName)
+      bridge.emitPlayerVisual({
+        x: this.player.x,
+        y: this.player.y,
+        frame: Number.isFinite(parsedFrame) ? parsedFrame : 0,
+        visible,
+      })
     }
 
     private registerPackFrames() {

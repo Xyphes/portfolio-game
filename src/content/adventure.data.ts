@@ -14,10 +14,6 @@ const adventureWorldCandidate = {
       fr: 'Initiation terminée · les chemins sont ouverts.',
       en: 'Training complete · the paths are open.',
     },
-    fragmentLocked: {
-      fr: 'Lisez d’abord un récit.',
-      en: 'Read one story first.',
-    },
     fragmentReady: {
       fr: 'Balise active · agir',
       en: 'Beacon active · act',
