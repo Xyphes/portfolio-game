@@ -62,6 +62,10 @@ export const portfolioSchema = z
       title: localizedTextSchema,
       introduction: localizedTextSchema,
       availability: localizedTextSchema,
+      portrait: z.object({
+        src: z.string().startsWith('/'),
+        alt: localizedTextSchema,
+      }),
     }),
     experiences: z.array(experienceSchema).min(1),
     education: z.array(educationSchema).min(1),

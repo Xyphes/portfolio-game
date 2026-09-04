@@ -4,7 +4,7 @@ import { portfolio } from './portfolio.data'
 const adventureWorldCandidate = {
   startScreenId: 'training-clearing',
   canvasCopy: {
-    action: { fr: 'Clic / Espace / A · agir', en: 'Click / Space / A · act' },
+    action: { fr: 'Interagir : clic, toucher, Espace ou A', en: 'Interact: click, tap, Space or A' },
     tutorialEnemy: { fr: 'Lueur d’essai', en: 'Practice wisp' },
     tutorialRequired: {
       fr: 'Touchez la lueur avec le bouton d’action avant d’explorer.',

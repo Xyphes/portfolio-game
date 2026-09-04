@@ -11,6 +11,8 @@ describe('portfolio content', () => {
     expect(portfolio.education).toHaveLength(3)
     expect(portfolio.projects).toHaveLength(6)
     expect(portfolio.interests).toHaveLength(4)
+    expect(portfolio.profile.portrait.src).toBe('/assets/profile/willy-somkhit-portrait.jpg')
+    expect(localize(portfolio.profile.portrait.alt, 'fr')).toBe('Portrait de Willy Somkhit')
     expect(getSkillLabel('typescript', 'fr')).toBe('TypeScript')
     expect(localize(portfolio.profile.title, 'en')).toBe('Full-stack Software Engineer')
     expect(getContentDetail({ kind: 'education', id: 'epita' }, 'en').title).toBe('EPITA')

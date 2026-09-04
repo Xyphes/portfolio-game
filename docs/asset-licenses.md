@@ -5,6 +5,7 @@
 | PWA monogram `public/icon.svg` | Project-owned | Created for this project | Project-owned | None |
 | Source CV PDF | Willy Somkhit | User-provided | User-provided | Copied unchanged to public documents |
 | Recommendation PDF | Julien Mullet / user-provided | User-provided | User-provided | Copied unchanged to public documents |
+| Profile portrait `public/assets/profile/willy-somkhit-portrait.jpg` | User-provided; photographer not specified | User-provided | Publication authorized by Willy Somkhit | Copied unchanged; displayed with CSS crop and color treatment |
 | Ninja Adventure subset in `public/assets/adventure/ninja-adventure/` | Pixel-Boy and AAA | [Official project page](https://pixel-boy.itch.io/ninja-adventure-asset-pack), [official repository](https://github.com/pixel-boy/NinjaAdventure), commit `6ac78232d5aedcc85ce5f27d060ea92366f7c24a` downloaded 2026-09-02 | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | Files renamed only; spritesheet frames and tileset crops are selected at runtime |
 
 ## Ninja Adventure files retained

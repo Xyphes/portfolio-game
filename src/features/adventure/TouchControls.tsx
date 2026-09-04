@@ -1,5 +1,6 @@
-import type { KeyboardEvent, PointerEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import type { AdventureBridge, Direction } from '../../game/bridge/AdventureBridge'
+import { getVirtualJoystickDirections } from './virtualJoystick'
 
 type TouchControlsProps = {
   bridge: AdventureBridge
@@ -14,10 +15,57 @@ const directions: Array<{ direction: Direction; glyph: string; className: string
 ]
 
 export function TouchControls({ bridge, locale }: TouchControlsProps) {
-  const hold = (direction: Direction, held: boolean) => (event: PointerEvent<HTMLButtonElement>) => {
+  const dpadRef = useRef<HTMLDivElement>(null)
+  const activePointerIdRef = useRef<number | null>(null)
+  const heldTouchDirectionsRef = useRef(new Set<Direction>())
+  const [activeTouchDirections, setActiveTouchDirections] = useState<Direction[]>([])
+
+  const applyTouchDirections = (nextDirections: Direction[]) => {
+    const previousDirections = heldTouchDirectionsRef.current
+    const nextDirectionSet = new Set(nextDirections)
+    const changed = directions.some(({ direction }) =>
+      previousDirections.has(direction) !== nextDirectionSet.has(direction))
+
+    if (!changed) return
+
+    for (const { direction } of directions) {
+      bridge.setDirection(direction, nextDirectionSet.has(direction))
+    }
+    heldTouchDirectionsRef.current = nextDirectionSet
+    setActiveTouchDirections(nextDirections)
+  }
+
+  const updateJoystick = (clientX: number, clientY: number) => {
+    const bounds = dpadRef.current?.getBoundingClientRect()
+    if (!bounds) return
+
+    const directionsFromPointer = getVirtualJoystickDirections(
+      clientX - (bounds.left + bounds.width / 2),
+      clientY - (bounds.top + bounds.height / 2),
+      Math.min(bounds.width, bounds.height) * 0.12,
+    )
+    applyTouchDirections(directionsFromPointer)
+  }
+
+  const startJoystick = (event: PointerEvent<HTMLButtonElement>) => {
+    if (activePointerIdRef.current !== null || !bridge.getRuntimeState().inputEnabled) return
     event.preventDefault()
-    bridge.setDirection(direction, held)
-    if (held) event.currentTarget.setPointerCapture(event.pointerId)
+    activePointerIdRef.current = event.pointerId
+    event.currentTarget.setPointerCapture(event.pointerId)
+    updateJoystick(event.clientX, event.clientY)
+  }
+
+  const moveJoystick = (event: PointerEvent<HTMLButtonElement>) => {
+    if (activePointerIdRef.current !== event.pointerId) return
+    event.preventDefault()
+    updateJoystick(event.clientX, event.clientY)
+  }
+
+  const releaseJoystick = (event: PointerEvent<HTMLButtonElement>) => {
+    if (activePointerIdRef.current !== event.pointerId) return
+    event.preventDefault()
+    activePointerIdRef.current = null
+    applyTouchDirections([])
   }
 
   const holdWithKeyboard = (direction: Direction, held: boolean) => (
@@ -30,24 +78,34 @@ export function TouchControls({ bridge, locale }: TouchControlsProps) {
     bridge.setDirection(direction, held)
   }
 
+  useEffect(() => () => {
+    for (const direction of heldTouchDirectionsRef.current) {
+      bridge.setDirection(direction, false)
+    }
+  }, [bridge])
+
   return (
     <div
       className="touch-controls"
       role="group"
       aria-label={locale === 'fr' ? 'Commandes de jeu' : 'Game controls'}
     >
-      <div className="dpad">
+      <div
+        ref={dpadRef}
+        className={activeTouchDirections.length > 0 ? 'dpad is-engaged' : 'dpad'}
+      >
         {directions.map(({ direction, glyph, className }) => (
           <button
             type="button"
             key={direction}
-            className={className}
+            className={`${className}${activeTouchDirections.includes(direction) ? ' is-active' : ''}`}
             aria-label={directionLabel(direction, locale)}
             aria-keyshortcuts={directionShortcut(direction, locale)}
-            onPointerDown={hold(direction, true)}
-            onPointerUp={hold(direction, false)}
-            onPointerCancel={hold(direction, false)}
-            onLostPointerCapture={hold(direction, false)}
+            onPointerDown={startJoystick}
+            onPointerMove={moveJoystick}
+            onPointerUp={releaseJoystick}
+            onPointerCancel={releaseJoystick}
+            onLostPointerCapture={releaseJoystick}
             onKeyDown={holdWithKeyboard(direction, true)}
             onKeyUp={holdWithKeyboard(direction, false)}
             onBlur={() => bridge.setDirection(direction, false)}

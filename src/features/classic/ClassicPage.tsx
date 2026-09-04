@@ -319,13 +319,24 @@ export function ClassicPage() {
           {activeSectionId === 'about' && (
             <>
               <section id="about" className="profile-intro">
-                <SectionIndex number="01" label={text.about} icon="user" />
-                <h1>{localize(portfolio.profile.title, routeLocale)}</h1>
-                <p>{localize(portfolio.profile.introduction, routeLocale)}</p>
-                <span className="availability">
-                  <i aria-hidden="true" />
-                  {localize(portfolio.profile.availability, routeLocale)}
-                </span>
+                <div className="profile-intro-copy">
+                  <SectionIndex number="01" label={text.about} icon="user" />
+                  <h1>{localize(portfolio.profile.title, routeLocale)}</h1>
+                  <figure className="profile-portrait">
+                    <img
+                      src={portfolio.profile.portrait.src}
+                      alt={localize(portfolio.profile.portrait.alt, routeLocale)}
+                      width="1295"
+                      height="1619"
+                      decoding="async"
+                    />
+                  </figure>
+                  <p>{localize(portfolio.profile.introduction, routeLocale)}</p>
+                  <span className="availability">
+                    <i aria-hidden="true" />
+                    {localize(portfolio.profile.availability, routeLocale)}
+                  </span>
+                </div>
               </section>
               <section className="proof-callout">
                 <span className="fragment-glyph" aria-hidden="true">◆</span>

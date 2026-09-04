@@ -54,7 +54,7 @@ const pixels = [
   [75, 24, 6, -3.1, 11.3, -15, 14, 0.3],
 ] as const
 
-const ANIMATION_SPEED = 0.62
+const ANIMATION_SPEED = 0.31
 const DRIFT_SCALE = 1.35
 
 export function PixelBlastBackdrop({

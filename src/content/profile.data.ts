@@ -14,4 +14,11 @@ export const portfolioProfile = {
     fr: 'Disponible pour un CDI à partir de septembre 2026.',
     en: 'Available for a full-time position from September 2026.',
   },
+  portrait: {
+    src: '/assets/profile/willy-somkhit-portrait.jpg',
+    alt: {
+      fr: 'Portrait de Willy Somkhit',
+      en: 'Portrait of Willy Somkhit',
+    },
+  },
 } satisfies Portfolio['profile']

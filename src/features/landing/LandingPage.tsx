@@ -57,6 +57,15 @@ export function LandingPage() {
         <h1>{portfolioProfile.name}</h1>
         <p className="hero-title">{localize(portfolioProfile.title, locale)}</p>
         <p className="hero-lead">{text.lead}</p>
+        <figure className="landing-portrait">
+          <img
+            src={portfolioProfile.portrait.src}
+            alt={localize(portfolioProfile.portrait.alt, locale)}
+            width="1295"
+            height="1619"
+            decoding="async"
+          />
+        </figure>
       </section>
 
       <section className="mode-grid" aria-label={locale === 'fr' ? 'Choix du mode' : 'Choose a mode'}>
