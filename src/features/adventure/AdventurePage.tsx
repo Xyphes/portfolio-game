@@ -25,6 +25,7 @@ import { collectContentProgress } from './collectContentProgress'
 import { PhaserHost } from './PhaserHost'
 import { QuestJournal } from './QuestJournal'
 import { TouchControls } from './TouchControls'
+import { releaseLandscapeOrientation, requestLandscapeOrientation } from './orientation'
 import { useModalFocus } from './useModalFocus'
 
 const copy = {
@@ -37,6 +38,8 @@ const copy = {
     close: 'Fermer',
     rotate: 'Tournez votre téléphone',
     rotateText: 'L’aventure se joue en paysage. Le portfolio classique reste disponible immédiatement.',
+    rotateAction: 'Passer en mode paysage',
+    rotateUnavailable: 'La rotation automatique n’est pas disponible dans ce navigateur. Tournez l’appareil manuellement ou utilisez le mode classique.',
     keyboard: 'Flèches ou ZQSD / WASD · E ou Espace',
     proof: 'Cette fiche provient de la même donnée validée que le mode classique.',
     training: 'Initiation',
@@ -82,6 +85,8 @@ const copy = {
     close: 'Close',
     rotate: 'Rotate your phone',
     rotateText: 'The adventure is played in landscape. The classic portfolio remains immediately available.',
+    rotateAction: 'Switch to landscape',
+    rotateUnavailable: 'Automatic rotation is not available in this browser. Rotate the device manually or use classic mode.',
     keyboard: 'Arrow keys or WASD · E or Space',
     proof: 'This profile comes from the same validated data as classic mode.',
     training: 'Training',
@@ -144,6 +149,8 @@ export function AdventurePage() {
   const [showJournal, setShowJournal] = useState(false)
   const [showGuide, setShowGuide] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
+  const [orientationRequestPending, setOrientationRequestPending] = useState(false)
+  const [orientationMessage, setOrientationMessage] = useState<string | null>(null)
   const [gameSessionKey, setGameSessionKey] = useState(0)
   const [completionDialog, setCompletionDialog] = useState<CompletionKind | null>(null)
   const contentDialogRef = useRef<HTMLElement>(null)
@@ -153,6 +160,7 @@ export function AdventurePage() {
     isProfessionalJourneyComplete(initialProgress),
   )
   const adventureCompletionWasReached = useRef(isAdventureComplete(initialProgress))
+  const orientationLockRef = useRef({ locked: false, enteredFullscreen: false })
 
   useEffect(() => {
     if (locale !== routeLocale) setLocale(routeLocale)
@@ -188,6 +196,23 @@ export function AdventurePage() {
     } else if (event.type === 'notice') setNotice(event.message)
   }), [bridge, commitProgress, routeLocale])
   useEffect(() => () => bridge.dispose(), [bridge])
+  useEffect(() => () => {
+    if (orientationLockRef.current.locked) {
+      releaseLandscapeOrientation(orientationLockRef.current.enteredFullscreen)
+    }
+  }, [])
+
+  const rotateToLandscape = useCallback(async () => {
+    setOrientationRequestPending(true)
+    setOrientationMessage(null)
+    const result = await requestLandscapeOrientation()
+    orientationLockRef.current = {
+      locked: result.status === 'locked',
+      enteredFullscreen: result.enteredFullscreen,
+    }
+    if (result.status === 'unsupported') setOrientationMessage(text.rotateUnavailable)
+    setOrientationRequestPending(false)
+  }, [text.rotateUnavailable])
 
   const tutorialCompleted = progress.flags.includes(TUTORIAL_FLAG_ID)
   const currentScreen = getAdventureScreen(currentScreenId)
@@ -334,9 +359,19 @@ export function AdventurePage() {
       </header>
 
       <section className="portrait-gate">
-        <span className="rotate-icon" aria-hidden="true">↻</span>
+        <button
+          type="button"
+          className="rotate-button"
+          aria-label={text.rotateAction}
+          aria-busy={orientationRequestPending}
+          disabled={orientationRequestPending}
+          onClick={() => void rotateToLandscape()}
+        >
+          <span className="rotate-icon" aria-hidden="true">↻</span>
+        </button>
         <h1>{text.rotate}</h1>
         <p>{text.rotateText}</p>
+        {orientationMessage && <p className="orientation-message" role="status">{orientationMessage}</p>}
         <Link className="primary-link" to={`/${routeLocale}/classic`}>{text.classic}</Link>
       </section>
 

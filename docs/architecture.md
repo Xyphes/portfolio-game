@@ -238,3 +238,9 @@ Bridge and overlay tests protect initial visual state, changed-state delivery, d
 Touch controls now live beside the game frame rather than inside it. In coarse-pointer landscape layouts, the game column becomes a size-query container: the 5:3 frame width is limited by both its available height and a responsive horizontal reserve for the two control gutters. This makes the full lower edge reachable even when mobile browser chrome reduces the small viewport height.
 
 The directional pad is centered in the left gutter and the action button in the right gutter. Their responsive sizes remain independent from Phaser’s 480×288 logical coordinates, while the canvas keeps its aspect ratio, pixel scaling, and centered position. They remain visible on fine-pointer devices as optional click controls; portrait still uses the orientation fallback, and every button retains its pointer-capture and keyboard behavior.
+
+## Jalon 27 progressive orientation request
+
+The portrait adventure fallback exposes its rotation glyph as a semantic button. A user gesture first requests a landscape lock through the Screen Orientation API; when the browser requires fullscreen, the app progressively requests fullscreen and retries once. Unsupported or rejected requests remain non-fatal and produce a localized status message plus the existing classic-mode route. A successful lock is released when adventure mode unmounts, including fullscreen entered by this flow.
+
+The PWA manifest keeps `orientation: any` because landing and classic reading must remain comfortable in portrait. Automatic landscape is therefore a route-local enhancement rather than a global application restriction. Unit tests cover direct success, fullscreen retry, and unsupported-browser fallback.

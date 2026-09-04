@@ -22,6 +22,7 @@ The build verifier checks the PWA identity, required offline documents, deferred
 - Persistent controls: on both fine-pointer desktop and coarse-pointer landscape, confirm the directional pad and A button remain visible, centered in their respective side gutters, and operable by click or touch.
 - Fresh run: open one story in each branch and confirm its fragment is granted once, with no beacon sprite, collision, target, cartouche, or second interaction.
 - Mobile portrait: confirm that the orientation guidance and immediate classic-mode link remain usable.
+- Mobile orientation button: tap the rotation control in browser and installed-PWA contexts; confirm a supported device enters landscape, a fullscreen-required browser retries once, and unsupported iPhone Safari shows the localized fallback without breaking navigation.
 - Classic mode at 320 px, tablet, and desktop widths: select every category and confirm only its content replaces the right-hand reader, its hash and breadcrumb update, and both documents, every contact link, the language switch, and adventure mode remain reachable.
 - Classic reader: scroll long experience/project categories with wheel, keyboard, and touch while confirming the reader scrollbar remains visually hidden.
 - Classic mobile header: confirm the burger sits directly beside FR/EN, the redundant breadcrumb bar is absent, then open the menu, choose a category, dismiss it by backdrop and Escape, verify focus returns to its trigger, and confirm its adventure link works.

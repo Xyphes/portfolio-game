@@ -1570,6 +1570,43 @@ a:focus-visible {
   display: none;
 }
 
+.rotate-button {
+  display: grid;
+  width: 92px;
+  height: 92px;
+  place-items: center;
+  border: 1px solid rgba(240, 203, 90, 0.45);
+  border-radius: 50%;
+  background: rgba(240, 203, 90, 0.08);
+  color: var(--gold);
+  cursor: pointer;
+}
+
+.rotate-button:hover,
+.rotate-button:focus-visible {
+  background: rgba(240, 203, 90, 0.16);
+}
+
+.rotate-button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.rotate-button .rotate-icon {
+  transition: transform 180ms ease;
+}
+
+.rotate-button:active .rotate-icon,
+.rotate-button:disabled .rotate-icon {
+  transform: rotate(90deg);
+}
+
+.orientation-message {
+  max-width: 460px;
+  color: var(--gold) !important;
+  font-size: 13px;
+}
+
 .adventure-notice {
   position: fixed;
   z-index: 15;
