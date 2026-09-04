@@ -25,7 +25,11 @@ import { collectContentProgress } from './collectContentProgress'
 import { PhaserHost } from './PhaserHost'
 import { QuestJournal } from './QuestJournal'
 import { TouchControls } from './TouchControls'
-import { releaseLandscapeOrientation, requestLandscapeOrientation } from './orientation'
+import {
+  requestAdventureFullscreen,
+  requestLandscapeOrientation,
+  restorePortraitOrientation,
+} from './orientation'
 import { useModalFocus } from './useModalFocus'
 
 const copy = {
@@ -161,6 +165,7 @@ export function AdventurePage() {
   )
   const adventureCompletionWasReached = useRef(isAdventureComplete(initialProgress))
   const orientationLockRef = useRef({ locked: false, enteredFullscreen: false })
+  const orientationRestoreTimerRef = useRef<number | undefined>(undefined)
 
   useEffect(() => {
     if (locale !== routeLocale) setLocale(routeLocale)
@@ -196,9 +201,33 @@ export function AdventurePage() {
     } else if (event.type === 'notice') setNotice(event.message)
   }), [bridge, commitProgress, routeLocale])
   useEffect(() => () => bridge.dispose(), [bridge])
-  useEffect(() => () => {
-    if (orientationLockRef.current.locked) {
-      releaseLandscapeOrientation(orientationLockRef.current.enteredFullscreen)
+  useEffect(() => {
+    if (orientationRestoreTimerRef.current !== undefined) {
+      window.clearTimeout(orientationRestoreTimerRef.current)
+      orientationRestoreTimerRef.current = undefined
+    }
+    let fullscreenRequestPending = false
+    const enterFullscreenAfterRotation = () => {
+      const isLandscape = window.screen.orientation?.type.startsWith('landscape')
+        || window.innerWidth > window.innerHeight
+      if (!isLandscape || document.fullscreenElement || fullscreenRequestPending) return
+
+      fullscreenRequestPending = true
+      void requestAdventureFullscreen()
+        .then((enteredFullscreen) => {
+          if (enteredFullscreen) orientationLockRef.current.enteredFullscreen = true
+        })
+        .finally(() => { fullscreenRequestPending = false })
+    }
+
+    window.screen.orientation?.addEventListener('change', enterFullscreenAfterRotation)
+    window.addEventListener('orientationchange', enterFullscreenAfterRotation)
+    return () => {
+      window.screen.orientation?.removeEventListener('change', enterFullscreenAfterRotation)
+      window.removeEventListener('orientationchange', enterFullscreenAfterRotation)
+      orientationRestoreTimerRef.current = window.setTimeout(() => {
+        void restorePortraitOrientation(orientationLockRef.current.enteredFullscreen)
+      }, 0)
     }
   }, [])
 

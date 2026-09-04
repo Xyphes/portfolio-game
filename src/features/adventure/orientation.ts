@@ -1,5 +1,5 @@
 type LockableScreenOrientation = ScreenOrientation & {
-  lock?: (orientation: 'landscape') => Promise<void>
+  lock?: (orientation: 'landscape' | 'portrait') => Promise<void>
   unlock?: () => void
 }
 
@@ -40,8 +40,50 @@ export function requestLandscapeOrientation(): Promise<LandscapeOrientationResul
   return attemptLandscapeOrientation(lock, requestFullscreen)
 }
 
-export function releaseLandscapeOrientation(exitFullscreen: boolean): void {
+export async function attemptFullscreen(
+  requestFullscreen: (() => Promise<void>) | undefined,
+): Promise<boolean> {
+  if (!requestFullscreen) return false
+  try {
+    await requestFullscreen()
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function requestAdventureFullscreen(): Promise<boolean> {
+  if (document.fullscreenElement) return Promise.resolve(false)
+  const requestFullscreen = document.documentElement.requestFullscreen
+    ? document.documentElement.requestFullscreen.bind(document.documentElement)
+    : undefined
+  return attemptFullscreen(requestFullscreen)
+}
+
+export async function attemptPortraitRestore(
+  unlock: (() => void) | undefined,
+  lockPortrait: (() => Promise<void>) | undefined,
+  exitFullscreen: (() => Promise<void>) | undefined,
+): Promise<void> {
+  unlock?.()
+  try {
+    await lockPortrait?.()
+  } catch {
+    // Orientation restoration is best-effort across browsers.
+  }
+  try {
+    await exitFullscreen?.()
+  } catch {
+    // A browser can already have left fullscreen during navigation.
+  }
+}
+
+export function restorePortraitOrientation(exitFullscreen: boolean): Promise<void> {
   const orientation = window.screen.orientation as LockableScreenOrientation | undefined
-  orientation?.unlock?.()
-  if (exitFullscreen && document.fullscreenElement) void document.exitFullscreen?.()
+  const unlock = orientation?.unlock?.bind(orientation)
+  const lockPortrait = orientation?.lock?.bind(orientation, 'portrait')
+  const exit = exitFullscreen && document.fullscreenElement && document.exitFullscreen
+    ? document.exitFullscreen.bind(document)
+    : undefined
+  return attemptPortraitRestore(unlock, lockPortrait, exit)
 }
