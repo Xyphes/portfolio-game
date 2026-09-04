@@ -4,6 +4,7 @@ import { localize } from '../../content/selectors'
 import { LanguageSwitch } from '../../shared/LanguageSwitch'
 import { useLanguage } from '../../shared/language'
 import { usePageMetadata } from '../../shared/usePageMetadata'
+import { PixelBlastBackdrop } from '../../shared/PixelBlastBackdrop'
 import { prepareAdventureOrientation } from '../adventure/orientation'
 
 const copy = {
@@ -45,6 +46,7 @@ export function LandingPage() {
 
   return (
     <main className="landing-shell">
+      <PixelBlastBackdrop />
       <div className="ambient-grid" aria-hidden="true" />
       <p className="eyebrow landing-eyebrow">{text.eyebrow}</p>
       <header className="landing-header">

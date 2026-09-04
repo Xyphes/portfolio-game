@@ -5,6 +5,7 @@ import { getSkillLabel, localize } from '../../content/selectors'
 import { LanguageSwitch } from '../../shared/LanguageSwitch'
 import { normalizeLocale, useLanguage } from '../../shared/language'
 import { usePageMetadata } from '../../shared/usePageMetadata'
+import { PixelBlastBackdrop } from '../../shared/PixelBlastBackdrop'
 import { prepareAdventureOrientation } from '../adventure/orientation'
 import { ClassicIcon, type ClassicIconName } from './ClassicIcon'
 
@@ -260,6 +261,7 @@ export function ClassicPage() {
       </aside>
 
       <section className="classic-content">
+        <PixelBlastBackdrop context="classic" />
         <header className="classic-topbar">
           <div>
             <p className="eyebrow">{text.mode}</p>

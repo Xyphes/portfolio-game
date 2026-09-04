@@ -254,3 +254,17 @@ The classic skills workspace uses a small internal SVG icon vocabulary for progr
 All pictograms inherit the existing green-and-gold palette, remain sharp at every responsive scale, and require no font, external request, third-party asset, or production dependency. Their presentation belongs to React and CSS; canonical bilingual content and stable entity IDs remain unchanged.
 
 The same vocabulary now reinforces wayfinding throughout classic mode: every desktop and mobile navigation category carries its own icon, and the active reader repeats that symbol beside its numbered section marker. Document cards distinguish the file itself from the download action, while contact cards use a vector external-link indicator instead of a typographic arrow. Repetition is limited to navigation and action semantics so dense editorial cards remain uncluttered.
+
+## Jalon 29 classic category transitions
+
+Classic category replacement keeps the existing React state and URL-hash behavior. Because the internally scrollable reader is already keyed by the active stable section ID, its newly mounted content receives a short opacity-and-horizontal-position transition plus a single green-and-gold scan line. The active desktop and mobile navigation controls transition their color, border, background, and icon position using the same timing vocabulary.
+
+The transition changes no routing, canonical content, focus order, or scroll ownership. It uses CSS only, adds no runtime dependency, and is neutralized by the global `prefers-reduced-motion: reduce` policy.
+
+## Jalon 30 landing Pixel Blast backdrop
+
+The landing page uses a lightweight, code-native interpretation of React Bits' Pixel Blast visual language: a deterministic field of square green, moss, and gold fragments drifts behind the existing grid and content. It is decorative, ignores pointer input, contains no editorial content, and introduces no image asset, WebGL renderer, or production dependency.
+
+The shared decorative effect is rendered by React on all three experiences without crossing into Phaser. On landing it fills the ambient background; in classic mode it sits behind the reader content; in adventure mode an inverted radial mask concentrates it in the margins around the game. Route-specific opacity and masks prevent the effect from competing with editorial text, controls, or the Phaser world.
+
+The deterministic field contains 40 green squares and individually dispersed golden triangles on wide screens and its density is halved to 20 on narrow screens; the existing global reduced-motion policy collapses the animation to a static composition. The triangles use a warm three-stop gradient, a two-level glow, a minimum 14-pixel footprint, and a dedicated higher-opacity motion cycle so their silhouette and gold color remain evident against the dark background, but they never form or reproduce a third-party game symbol. Particle movement uses continuously interpolated, GPU-composited transforms over roughly 5.7 to 8.8 seconds; the stepped pixel-art timing was rejected because it looked like dropped frames at this subtle scale.

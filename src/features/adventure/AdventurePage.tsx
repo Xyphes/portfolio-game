@@ -20,6 +20,7 @@ import { createBrowserProgressRepository } from '../../infrastructure/progressRe
 import { LanguageSwitch } from '../../shared/LanguageSwitch'
 import { normalizeLocale, useLanguage } from '../../shared/language'
 import { usePageMetadata } from '../../shared/usePageMetadata'
+import { PixelBlastBackdrop } from '../../shared/PixelBlastBackdrop'
 import { AdventureGuide } from './AdventureGuide'
 import { collectContentProgress } from './collectContentProgress'
 import { PhaserHost } from './PhaserHost'
@@ -360,6 +361,7 @@ export function AdventurePage() {
 
   return (
     <main className="adventure-shell">
+      <PixelBlastBackdrop context="adventure" />
       <header className="adventure-header">
         <div className="adventure-header-primary">
           <Link
