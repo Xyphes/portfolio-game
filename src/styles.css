@@ -283,6 +283,7 @@ a:focus-visible {
   position: absolute;
   z-index: 2;
   top: clamp(14px, 3vh, 30px);
+  left: clamp(14px, 5vw, 76px);
   right: clamp(14px, 5vw, 76px);
   display: flex;
   width: auto;
@@ -291,11 +292,19 @@ a:focus-visible {
   margin: 0;
 }
 
+.landing-eyebrow {
+  position: absolute;
+  z-index: 2;
+  top: clamp(6px, 1vh, 10px);
+  left: clamp(14px, 5vw, 76px);
+  margin: 0;
+}
+
 .hero {
   display: grid;
   align-content: center;
   gap: clamp(6px, 1.2vh, 12px);
-  padding: 0;
+  padding: 40px 0 0;
 }
 
 .hero h1 {
@@ -514,6 +523,12 @@ a:focus-visible {
   display: grid;
   gap: 16px;
   margin-top: auto;
+}
+
+.classic-mobile-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .mode-switch-link,
@@ -1359,7 +1374,6 @@ a:focus-visible {
 .canvas-action-hint,
 .canvas-object-label,
 .canvas-training-copy,
-.canvas-fragment-copy,
 .canvas-awaiting-copy {
   position: absolute;
   box-sizing: border-box;
@@ -1419,25 +1433,6 @@ a:focus-visible {
   width: 58.4%;
   padding: 1.5cqw 2.5cqw;
   font-size: 1.875cqw;
-}
-
-.canvas-fragment-copy {
-  top: 55%;
-  right: 3.75%;
-  width: 24%;
-  padding: 0.8cqw 1.65cqw;
-  color: #9cb963;
-  font-size: 1.25cqw;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.canvas-fragment-copy.is-ready {
-  color: #78d48a;
-}
-
-.canvas-fragment-copy.is-collected {
-  color: var(--gold);
 }
 
 .canvas-awaiting-copy {
@@ -2094,17 +2089,20 @@ a:focus-visible {
     margin-top: 0;
   }
 
+  .classic-mobile-controls {
+    justify-content: flex-end;
+  }
+
   .classic-sidebar .mode-switch-link {
     display: none;
   }
 
   .classic-topbar {
-    min-height: 78px;
-    padding: 16px 20px;
+    display: none;
   }
 
   .classic-content {
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
   }
 
   .classic-menu-button {
@@ -2141,7 +2139,7 @@ a:focus-visible {
   .classic-menu-scrim {
     position: absolute;
     z-index: 11;
-    inset: 78px 0 0;
+    inset: 0;
     display: block;
     width: 100%;
     border: 0;
@@ -2152,11 +2150,11 @@ a:focus-visible {
   .classic-mobile-nav {
     position: absolute;
     z-index: 12;
-    top: 78px;
+    top: 0;
     right: 0;
     display: grid;
     width: min(320px, calc(100% - 24px));
-    max-height: calc(100% - 78px);
+    max-height: 100%;
     overflow-y: auto;
     border-bottom: 1px solid var(--line);
     border-left: 1px solid var(--line);
@@ -2213,7 +2211,7 @@ a:focus-visible {
 
   .classic-scroll {
     width: 100%;
-    padding-top: 46px;
+    padding-top: 24px;
   }
 
   .detail-grid,
@@ -2337,8 +2335,8 @@ a:focus-visible {
     display: none;
   }
 
-  .classic-topbar {
-    gap: 14px;
+  .classic-sidebar .monogram {
+    display: none;
   }
 
 }
@@ -2390,6 +2388,7 @@ a:focus-visible {
 
   .landing-header {
     top: 8px;
+    left: 12px;
     right: 12px;
   }
 
@@ -2397,7 +2396,9 @@ a:focus-visible {
     gap: 3px;
   }
 
-  .hero .eyebrow {
+  .landing-eyebrow {
+    top: 4px;
+    left: 12px;
     font-size: 8px;
   }
 
@@ -2518,10 +2519,6 @@ a:focus-visible {
   .adventure-brand .monogram {
     width: 36px;
     height: 36px;
-  }
-
-  .adventure-brand > span:last-child {
-    display: none;
   }
 
   .information-button {

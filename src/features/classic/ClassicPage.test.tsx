@@ -43,6 +43,7 @@ describe('ClassicPage category navigation', () => {
     renderClassicPage('#projects')
     const menuButton = screen.getByRole('button', { name: 'Menu' })
 
+    expect(menuButton.closest('.classic-sidebar')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'C# video game' })).toBeInTheDocument()
     fireEvent.click(menuButton)
 

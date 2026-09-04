@@ -7,7 +7,7 @@ import { usePageMetadata } from '../../shared/usePageMetadata'
 
 const copy = {
   fr: {
-    eyebrow: 'Portfolio interactif · prototype d’architecture',
+    eyebrow: 'Portfolio interactif',
     lead: 'Choisissez une lecture directe ou explorez un premier fragment de parcours.',
     classic: 'Mode classique',
     classicDescription: 'Consulter immédiatement mon profil, mon expérience et mes documents.',
@@ -19,7 +19,7 @@ const copy = {
     metaTitle: 'Willy Somkhit — Portfolio d’ingénieur logiciel',
   },
   en: {
-    eyebrow: 'Interactive portfolio · architecture prototype',
+    eyebrow: 'Interactive portfolio',
     lead: 'Choose a direct reading experience or explore the first fragment of my journey.',
     classic: 'Classic mode',
     classicDescription: 'Read my profile, featured experience, and documents immediately.',
@@ -45,12 +45,12 @@ export function LandingPage() {
   return (
     <main className="landing-shell">
       <div className="ambient-grid" aria-hidden="true" />
+      <p className="eyebrow landing-eyebrow">{text.eyebrow}</p>
       <header className="landing-header">
         <LanguageSwitch />
       </header>
 
       <section className="hero">
-        <p className="eyebrow">{text.eyebrow}</p>
         <h1>{portfolioProfile.name}</h1>
         <p className="hero-title">{localize(portfolioProfile.title, locale)}</p>
         <p className="hero-lead">{text.lead}</p>

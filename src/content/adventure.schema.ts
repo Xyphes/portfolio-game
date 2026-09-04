@@ -47,8 +47,6 @@ export const adventureWorldSchema = z
       tutorialEnemy: localizedTextSchema,
       tutorialRequired: localizedTextSchema,
       tutorialComplete: localizedTextSchema,
-      fragmentReady: localizedTextSchema,
-      fragmentCollected: localizedTextSchema,
       nothingNearby: localizedTextSchema,
     }),
   })

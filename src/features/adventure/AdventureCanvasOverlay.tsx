@@ -5,14 +5,11 @@ import { getContentDetail, localize } from '../../content/selectors'
 import { ADVENTURE_VIEWPORT, getContentPositions } from '../../game/worldLayout'
 import type { AdventureBridge } from '../../game/bridge/AdventureBridge'
 
-export type FragmentVisualState = 'locked' | 'ready' | 'collected'
-
 type AdventureCanvasOverlayProps = {
   bridge: AdventureBridge
   locale: Locale
   screenId: string
   tutorialCompleted: boolean
-  fragmentState?: FragmentVisualState
 }
 
 export function AdventureCanvasOverlay({
@@ -20,18 +17,10 @@ export function AdventureCanvasOverlay({
   locale,
   screenId,
   tutorialCompleted,
-  fragmentState,
 }: AdventureCanvasOverlayProps) {
   const playerVisualRef = useRef<HTMLDivElement>(null)
   const screen = getAdventureScreen(screenId)
   const positions = getContentPositions(screen.contentRefs.length)
-  const fragmentCopy = fragmentState && fragmentState !== 'locked'
-    ? localize(adventureWorld.canvasCopy[
-        fragmentState === 'collected'
-          ? 'fragmentCollected'
-          : 'fragmentReady'
-      ], locale)
-    : undefined
 
   useEffect(() => bridge.onPlayerVisual(({ x, y, frame, visible }) => {
     const playerVisual = playerVisualRef.current
@@ -75,10 +64,6 @@ export function AdventureCanvasOverlay({
               locale,
             )}
           </div>
-        )}
-
-        {fragmentCopy && (
-          <div className={`canvas-fragment-copy is-${fragmentState}`}>{fragmentCopy}</div>
         )}
 
         {screen.contentStatus === 'awaiting-user-content' && (

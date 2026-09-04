@@ -8,11 +8,9 @@ export type AdventureEvent =
   | { type: 'content'; reference: ContentReference }
   | { type: 'screen-changed'; screenId: string }
   | { type: 'tutorial-completed' }
-  | { type: 'fragment-collected'; fragmentId: string }
   | { type: 'notice'; message: string }
 
 export type AdventureRuntimeState = {
-  collectedFragmentIds: string[]
   discoveredContentKeys: string[]
   tutorialCompleted: boolean
   lastScreenId: string
@@ -20,7 +18,6 @@ export type AdventureRuntimeState = {
 }
 
 const defaultRuntimeState: AdventureRuntimeState = {
-  collectedFragmentIds: [],
   discoveredContentKeys: [],
   tutorialCompleted: false,
   lastScreenId: 'training-clearing',
@@ -95,10 +92,6 @@ export class AdventureBridge {
     const queued = this.actionQueued
     this.actionQueued = false
     return queued
-  }
-
-  isFragmentCollected(fragmentId: string): boolean {
-    return this.runtimeState.collectedFragmentIds.includes(fragmentId)
   }
 
   isContentDiscovered(reference: ContentReference): boolean {

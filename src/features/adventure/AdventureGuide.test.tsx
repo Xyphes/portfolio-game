@@ -16,8 +16,9 @@ describe('AdventureGuide', () => {
 
     expect(screen.getByRole('dialog', { name: 'L’essentiel en quelques secondes' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Découvrez un récit' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Suivez la balise verte' })).toBeInTheDocument()
-    expect(screen.getByText('Trois fragments terminent le parcours professionnel. La voie personnelle est un épilogue entièrement facultatif.')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Explorez à votre rythme' })).toBeInTheDocument()
+    expect(screen.getByText(/Le fragment de la zone est obtenu immédiatement/)).toBeInTheDocument()
+    expect(screen.getByText('Un récit dans chacune des trois zones termine le parcours professionnel. La voie personnelle est un épilogue entièrement facultatif.')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Ouvrir le mode classique' })).toHaveAttribute('href', '/fr/classic')
     expect(screen.getByRole('button', { name: 'Commencer l’exploration' })).toHaveFocus()
 

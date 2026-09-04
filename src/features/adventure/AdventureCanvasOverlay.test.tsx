@@ -14,7 +14,6 @@ describe('AdventureCanvasOverlay', () => {
         locale="fr"
         screenId="study-ruins"
         tutorialCompleted
-        fragmentState="ready"
       />,
     )
     const playerVisual = container.querySelector<HTMLElement>('.canvas-player-visual')!
@@ -34,18 +33,17 @@ describe('AdventureCanvasOverlay', () => {
     expect(playerVisual).not.toBeVisible()
   })
 
-  it('keeps the locked-beacon instruction out of the persistent game overlay', () => {
+  it('does not render a fragment beacon panel in the game overlay', () => {
     const bridge = new AdventureBridge()
-    const { queryByText } = render(
+    const { container } = render(
       <AdventureCanvasOverlay
         bridge={bridge}
         locale="fr"
         screenId="study-ruins"
         tutorialCompleted
-        fragmentState="locked"
       />,
     )
 
-    expect(queryByText(/récit/i)).not.toBeInTheDocument()
+    expect(container.querySelector('.canvas-fragment-copy')).not.toBeInTheDocument()
   })
 })

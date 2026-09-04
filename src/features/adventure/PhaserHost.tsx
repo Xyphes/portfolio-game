@@ -4,14 +4,13 @@ import type { Locale } from '../../content/portfolio.schema'
 import { createAdventureGame } from '../../game/createAdventureGame'
 import type { AdventureBridge } from '../../game/bridge/AdventureBridge'
 import { useReducedMotion } from '../../shared/useReducedMotion'
-import { AdventureCanvasOverlay, type FragmentVisualState } from './AdventureCanvasOverlay'
+import { AdventureCanvasOverlay } from './AdventureCanvasOverlay'
 
 type PhaserHostProps = {
   bridge: AdventureBridge
   locale: Locale
   screenId: string
   tutorialCompleted: boolean
-  fragmentState?: FragmentVisualState
 }
 
 export function PhaserHost({
@@ -19,7 +18,6 @@ export function PhaserHost({
   locale,
   screenId,
   tutorialCompleted,
-  fragmentState,
 }: PhaserHostProps) {
   const hostRef = useRef<HTMLDivElement>(null)
   const retryButtonRef = useRef<HTMLButtonElement>(null)
@@ -87,7 +85,6 @@ export function PhaserHost({
         locale={locale}
         screenId={screenId}
         tutorialCompleted={tutorialCompleted}
-        fragmentState={fragmentState}
       />
       {status === 'loading' && (
         <div className="game-runtime-status" role="status">

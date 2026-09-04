@@ -26,7 +26,6 @@ describe('AdventureBridge', () => {
     const reference = { kind: 'experience', id: 'thales' } as const
     const bridge = new AdventureBridge({
       lastScreenId: 'thales-grove',
-      collectedFragmentIds: ['thales-rigor'],
       discoveredContentKeys: ['experience:thales'],
     })
     const listener = vi.fn()
@@ -37,7 +36,6 @@ describe('AdventureBridge', () => {
     bridge.emitInteraction(reference)
     expect(listener).toHaveBeenCalledWith(reference)
     expect(eventListener).toHaveBeenCalledWith({ type: 'content', reference })
-    expect(bridge.isFragmentCollected('thales-rigor')).toBe(true)
     expect(bridge.isContentDiscovered(reference)).toBe(true)
     expect(bridge.getRuntimeState().lastScreenId).toBe('thales-grove')
 
@@ -50,19 +48,6 @@ describe('AdventureBridge', () => {
     expect(eventListener).toHaveBeenCalledTimes(1)
     expect(bridge.isDirectionHeld('up')).toBe(false)
     expect(bridge.consumeAction()).toBe(false)
-  })
-
-  it('forwards spatial fragment collection through the typed event contract', () => {
-    const bridge = new AdventureBridge()
-    const eventListener = vi.fn()
-    bridge.onEvent(eventListener)
-
-    bridge.emitEvent({ type: 'fragment-collected', fragmentId: 'thales-rigor' })
-
-    expect(eventListener).toHaveBeenCalledWith({
-      type: 'fragment-collected',
-      fragmentId: 'thales-rigor',
-    })
   })
 
   it('shares player visual state with the overlay and releases its observer', () => {

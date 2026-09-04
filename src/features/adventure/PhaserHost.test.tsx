@@ -29,7 +29,6 @@ describe('PhaserHost', () => {
           locale="en"
           screenId="study-ruins"
           tutorialCompleted
-          fragmentState="locked"
         />
       </MemoryRouter>,
     )

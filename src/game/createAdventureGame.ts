@@ -45,7 +45,6 @@ export async function createAdventureGame({
 
   class AdventureWorldScene extends Phaser.Scene {
     private player!: Phaser.GameObjects.Sprite
-    private fragmentMarker?: Phaser.GameObjects.Image
     private pointerMarker?: Phaser.GameObjects.Arc
     private pointerTarget?: PointerTarget
     private enemy?: Phaser.GameObjects.Sprite
@@ -189,8 +188,6 @@ export async function createAdventureGame({
         this.performAction()
       }
 
-      const screen = getAdventureScreen(this.currentScreenId)
-      this.updateFragmentMarker(screen)
       for (const interactable of this.interactables) {
         interactable.object.setAlpha(bridge.isContentDiscovered(interactable.reference) ? 0.58 : 1)
       }
@@ -227,7 +224,6 @@ export async function createAdventureGame({
         object: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite
         arrivalDistance: number
       }> = this.interactables.map(({ object }) => ({ object, arrivalDistance: 26 }))
-      if (this.fragmentMarker) candidates.push({ object: this.fragmentMarker, arrivalDistance: 34 })
       if (this.enemy) candidates.push({ object: this.enemy, arrivalDistance: 30 })
 
       const nearest = candidates
@@ -305,14 +301,6 @@ export async function createAdventureGame({
         this.interactables.push({ object, reference })
 
       })
-
-      if (screen.fragment) {
-        this.fragmentMarker = this.track(
-          this.add.image(438, 144, 'memory-book').setDepth(4),
-        )
-        this.makeSolid(this.fragmentMarker)
-        this.updateFragmentMarker(screen)
-      }
     }
 
     private createContentObject(reference: ContentReference, index: number, x: number, y: number) {
@@ -365,20 +353,6 @@ export async function createAdventureGame({
         return
       }
 
-      if (this.fragmentMarker && screen.fragment && this.distanceTo(this.fragmentMarker) < 40) {
-        if (bridge.isFragmentCollected(screen.fragment.id)) {
-          bridge.emitEvent({
-            type: 'notice',
-            message: localize(adventureWorld.canvasCopy.fragmentCollected, locale),
-          })
-        } else if (!this.isFragmentReady(screen)) {
-          return
-        } else {
-          bridge.emitEvent({ type: 'fragment-collected', fragmentId: screen.fragment.id })
-        }
-        return
-      }
-
       const nearest = this.interactables
         .map((interactable) => ({ ...interactable, distance: this.distanceTo(interactable.object) }))
         .sort((left, right) => left.distance - right.distance)[0]
@@ -419,24 +393,6 @@ export async function createAdventureGame({
         duration: 180,
         onComplete: () => this.drawCurrentScreen(),
       })
-    }
-
-    private isFragmentReady(screen: AdventureScreen) {
-      return screen.contentRefs.some((reference) => bridge.isContentDiscovered(reference))
-    }
-
-    private updateFragmentMarker(screen: AdventureScreen) {
-      if (!this.fragmentMarker || !screen.fragment) return
-
-      const collected = bridge.isFragmentCollected(screen.fragment.id)
-      const ready = this.isFragmentReady(screen)
-      const state = collected
-        ? { tint: 0xf0cb5a, alpha: 1 }
-        : ready
-          ? { tint: 0x78d48a, alpha: 1 }
-          : { tint: 0x9cb963, alpha: 0.42 }
-
-      this.fragmentMarker.setTint(state.tint).setAlpha(state.alpha)
     }
 
     private checkScreenExit() {
@@ -558,7 +514,6 @@ export async function createAdventureGame({
     private clearScreenObjects() {
       this.clearPointerTarget()
       for (const collider of this.colliders.splice(0)) collider.destroy()
-      this.fragmentMarker = undefined
       this.enemy = undefined
       this.interactables.splice(0)
       for (const object of this.screenObjects.splice(0)) object.destroy()

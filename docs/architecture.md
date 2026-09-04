@@ -69,7 +69,7 @@ To activate the future music file:
 
 Progress version 3 adds `discoveredContentKeys`, using the stable `kind:id` form produced by `getContentReferenceKey`. Version 1 and version 2 saves migrate without losing fragments, tutorial completion, visit count, or the last valid screen.
 
-React records a discovery when Phaser emits a typed content interaction. The quest panel reports discoveries for the current zone, while Phaser lowers the opacity of already-read objects. Fragment collection remains separate: reading a profile is remembered immediately, but keeping the zone fragment is an explicit choice in the dialogue.
+React records a discovery when Phaser emits a typed content interaction. The same atomic progress update immediately grants that content’s zone fragment. The quest panel reports discoveries for the current zone, while Phaser lowers the opacity of already-read objects.
 
 This separation supports a short main path: one interaction per professional branch is enough to collect the three professional fragments, while recruiters who want detail can inspect every character or object. Personal content remains optional.
 
@@ -87,7 +87,7 @@ The domain now exposes two explicit predicates. `isProfessionalJourneyComplete` 
 
 React opens the professional conclusion as soon as the experience, education, and project fragments are collected. It links directly to the full classic portfolio and CV, and offers the personal trail only as an optional continuation. Collecting the personal fragment later opens a distinct epilogue. If the personal fragment was collected first in the open world, both outcomes are presented in order when the professional path finishes.
 
-The quest panel separates professional progress (`0 / 3` through `3 / 3`) from total world fragments and keeps a distinct completed-epilogue marker. Phaser still receives the same collected IDs through the bridge, so this change remains a domain and React presentation concern rather than a game-engine rule.
+The quest panel separates professional progress (`0 / 3` through `3 / 3`) from total world fragments and keeps a distinct completed-epilogue marker. Fragment ownership remains entirely in React and the versioned domain state; Phaser only emits the selected stable content reference.
 
 ## Jalon 8 adventure accessibility
 
@@ -147,13 +147,13 @@ React applies the clean state immediately to both its own presentation and the t
 
 The confirmation flow and storage isolation are covered by component and repository tests. A human can now use the journal to prepare a fresh 5–10 minute timing run without browser developer tools; actually recording that timed run remains a release action.
 
-## Jalon 15 spatial fragment loop
+## Jalon 15 automatic fragment collection
 
-Professional and personal branches now share a short three-step loop: reach a zone, discover any one approved story, then walk to the zone beacon and use the action control to claim its fragment. Additional stories remain optional, exits remain unlocked, and the permanent classic-mode link still bypasses gameplay entirely.
+Professional and personal branches share a direct two-step loop: reach a zone and discover any one approved story. That first reading immediately grants the zone fragment. Additional stories remain optional, exits remain unlocked, and the permanent classic-mode link still bypasses gameplay entirely.
 
-The beacon reuses the existing licensed book asset and has three data-driven states: locked before a discovery, active after the first discovery, and collected. The locked state is deliberately silent because onboarding already explains the loop: it renders no canvas cartouche and emits no interaction notice. Phaser owns proximity detection and emits a typed `fragment-collected` event; React validates presentation state, persists the fragment, announces success, and triggers the appropriate professional or personal conclusion. Editorial strings remain in the validated adventure content rather than the scene implementation.
+The former spatial beacon, its book sprite, collision body, click target, canvas label, and bridge event were removed. React maps the emitted stable content reference back to its validated adventure screen and persists the discovery plus fragment in one idempotent update. Phaser no longer receives fragment ownership because it has no spatial fragment behavior to render.
 
-This replaces the direct fragment button in the React content dialogue and adds a deliberate spatial reward without increasing the world size or introducing failure. Bridge tests cover the new event contract, while manual keyboard and touch playthroughs verify proximity, beacon feedback, and timing.
+Unit tests protect automatic collection and repeated-reading idempotence. Manual keyboard, mouse, and touch playthroughs verify that opening one item updates the journal and route recommendation without a second action.
 
 ## Jalon 16 reduced motion inside Phaser
 
@@ -173,7 +173,7 @@ This fallback does not move Phaser into the initial bundle or change offline cac
 
 ## Jalon 18 onboarding and controls guide
 
-The quest panel now exposes a concise bilingual help dialogue at any point in the adventure. It explains the complete no-failure loop—choose any professional branch, discover one approved story, follow the newly activated green beacon, and claim its fragment—before distinguishing the three-fragment professional conclusion from the optional personal epilogue. Keyboard and touch controls are documented in the same place, together with a permanent direct route to classic mode.
+The quest panel exposes a concise bilingual help dialogue at any point in the adventure. It explains the complete no-failure loop—choose any professional branch and discover one approved story to receive its fragment immediately—before distinguishing the three-fragment professional conclusion from the optional personal epilogue. Keyboard and touch controls are documented in the same place, together with a permanent direct route to classic mode.
 
 The guide is a React-owned accessible modal rather than canvas text: it receives initial focus, traps keyboard navigation, closes with Escape, restores focus to its trigger, and disables Phaser input while open. Its layout becomes a single column on narrow screens and remains internally scrollable in short landscape viewports. No progress field, canonical portfolio entity, game topology, or asset was added.
 
@@ -181,7 +181,7 @@ Component tests protect both locales, the recruiter loop wording, initial focus,
 
 ## Jalon 19 mouse navigation
 
-Desktop visitors can now click any reachable point in the Phaser world to move toward it. Clicking a story object, the training guardian, or a fragment beacon selects that spatial target and automatically performs the existing action once the player reaches its safe interaction radius. A small code-drawn target ring provides immediate feedback without adding an asset.
+Desktop visitors can click any reachable point in the Phaser world to move toward it. Clicking a story object or the training guardian selects that spatial target and automatically performs the existing action once the player reaches its safe interaction radius. A small code-drawn target ring provides immediate feedback without adding an asset.
 
 Keyboard and on-screen directional input always cancel the active pointer destination. Opening a React overlay, using the action control, reaching a blocked edge, or changing screens also clears the destination and marker, preventing stale movement across UI and scene boundaries. Pointer input is ignored whenever the typed bridge disables gameplay.
 
@@ -201,13 +201,13 @@ An empty action no longer draws the misleading yellow rectangle. React instead a
 
 Every visible border bush now has a matching static Arcade Physics rectangle. A side without an exit is one continuous wall; a side with an exit is split into two walls around the same central opening used by the rendered foliage. The exit handler independently verifies that the hero is inside this opening before changing screens, so a border transition cannot be triggered through a bush even if physics resolution briefly places the hero beyond the threshold. Shared layout helpers and unit tests keep visual openings, collisions, and transition rules aligned.
 
-Phaser continues to own sprites, movement, collisions, and spatial interactions, but no longer rasterizes interface text into the scaled canvas. A pointer-transparent React layer renders the localized zone title, object labels, action hint, tutorial state, beacon state, and awaiting-content message from the same validated content and layout coordinates. Container-relative typography tracks every supported game-size tier while remaining browser-rendered and sharp; no editorial text or progress data is duplicated inside Phaser.
+Phaser continues to own sprites, movement, collisions, and spatial interactions, but no longer rasterizes interface text into the scaled canvas. A pointer-transparent React layer renders the localized zone title, object labels, action hint, tutorial state, and awaiting-content message from the same validated content and layout coordinates. Container-relative typography tracks every supported game-size tier while remaining browser-rendered and sharp; no editorial text or progress data is duplicated inside Phaser.
 
 ## Jalon 22 compact header and map overlay
 
-The redundant frame-label strip was removed so the canvas begins directly inside its border. The information trigger now sits beside the monogram in the global adventure header, while language and permanent classic-mode access remain grouped on the opposite side. Short desktop landscapes between 500 and 699 px high use a dedicated 720×432 presentation tier; standard and large desktop tiers remain 960×576 and 1440×864.
+The redundant frame-label strip was removed so the canvas begins directly inside its border. The information trigger sits beside the monogram in the global adventure header, while language and permanent classic-mode access remain grouped on the opposite side. The compact 36 px `WS` monogram remains visible in short phone and desktop landscapes. Short desktop landscapes between 500 and 699 px high use a dedicated 720×432 presentation tier; standard and large desktop tiers remain 960×576 and 1440×864.
 
-The miniature map moved from the information drawer to a pointer-transparent, semi-transparent overlay in the upper-right corner of the game. It still derives current, recommended, completed, and pending states from the same `adventureWorld` coordinates and versioned React progression. The fragment beacon moved to the middle-right play area so it remains visible and reachable below the overlay. React owns the map presentation and accessibility label; Phaser still owns the beacon’s spatial interaction.
+The miniature map moved from the information drawer to a pointer-transparent, semi-transparent overlay in the upper-right corner of the game. It derives current, recommended, completed, and pending states from the same `adventureWorld` coordinates and versioned React progression. React owns the map presentation and accessibility label.
 
 ## Jalon 23 viewport-contained routes
 
@@ -215,7 +215,7 @@ Every top-level route now owns exactly the small viewport height (`100svh`) and 
 
 Classic mode uses the same viewport boundary but preserves readable full-length content: its sidebar or mobile header and top bar remain inside the shell, while `.classic-scroll` is the sole vertical scroll container. Choosing a hash-addressable category replaces the content of that internal reader rather than moving the browser document. Adventure and route-loading states already used fixed viewport shells and remain unchanged.
 
-The landing header intentionally contains only the language switch. It floats in the upper-right corner instead of consuming a grid row, allowing the identity hero to begin at the top padding on desktop. Mobile layouts reserve the same control height inside the hero to prevent overlap. The redundant `WS` monogram was removed from this route; mode-specific headers retain their own navigation identity.
+The concise bilingual “Portfolio interactif” eyebrow is a low-priority label anchored independently against the upper-left edge, while the language switch occupies the upper-right header. The identity hero reserves a dedicated top offset, placing the name below both controls without overlap on desktop or mobile. The former “prototype d’architecture” qualifier and redundant `WS` monogram were removed from this route; mode-specific headers retain their own navigation identity.
 
 ## Jalon 24 category workspace and mobile burger
 
@@ -223,7 +223,7 @@ Classic mode is now a category workspace instead of one continuous document. Des
 
 The right-hand reader remains the only vertical scroll surface, but its scrollbar chrome is hidden across Firefox, Chromium, and legacy Edge while wheel, touch, and keyboard scrolling remain available. This keeps the fixed-viewport shell visually clean without clipping long experience, project, or document content.
 
-Below 800 px, a 44 px burger opens a superposed bilingual category menu with the permanent adventure link. The menu moves focus to its first category, closes by selection, backdrop click, or Escape, and restores focus to its trigger. Component tests protect content replacement, hash state, initial deep links, adventure access, and Escape behavior; responsive visual QA covers desktop and the reliable 500 px Chrome headless viewport.
+Below 800 px, the 44 px burger sits in the compact identity header immediately beside the language switch. The redundant classic-mode breadcrumb bar is removed at this size, so the content reader begins directly below the header. The burger opens a superposed bilingual category menu with the permanent adventure link; the menu moves focus to its first category, closes by selection, backdrop click, or Escape, and restores focus to its trigger. Component tests protect content replacement, hash state, initial deep links, adventure access, and Escape behavior; responsive visual QA covers desktop and the reliable 500 px Chrome headless viewport.
 
 ## Jalon 25 player-over-copy composition
 

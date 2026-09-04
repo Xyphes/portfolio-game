@@ -14,14 +14,6 @@ const adventureWorldCandidate = {
       fr: 'Initiation terminée · les chemins sont ouverts.',
       en: 'Training complete · the paths are open.',
     },
-    fragmentReady: {
-      fr: 'Balise active · agir',
-      en: 'Beacon active · act',
-    },
-    fragmentCollected: {
-      fr: 'Fragment obtenu',
-      en: 'Fragment collected',
-    },
     nothingNearby: {
       fr: 'Rien à examiner ici. Approchez-vous d’un repère.',
       en: 'Nothing to inspect here. Move closer to a marker.',
@@ -52,8 +44,8 @@ const adventureWorldCandidate = {
       kind: 'experience',
       name: { fr: 'Bosquet de la rigueur', en: 'Grove of rigor' },
       hint: {
-        fr: 'Rencontrez un guide, puis récupérez le fragment à la balise ; les cinq autres récits sont facultatifs.',
-        en: 'Meet one guide, then claim the fragment at the beacon; the other five stories are optional.',
+        fr: 'Rencontrez un guide pour obtenir le fragment ; les cinq autres récits sont facultatifs.',
+        en: 'Meet one guide to collect the fragment; the other five stories are optional.',
       },
       exits: { left: 'training-clearing' },
       contentRefs: [
@@ -76,8 +68,8 @@ const adventureWorldCandidate = {
       kind: 'studies',
       name: { fr: 'Archives des études', en: 'Study archives' },
       hint: {
-        fr: 'Consultez une archive, puis récupérez le fragment à la balise ; les deux autres complètent le parcours.',
-        en: 'Read one archive, then claim the fragment at the beacon; the other two complete the journey.',
+        fr: 'Consultez une archive pour obtenir le fragment ; les deux autres complètent le parcours.',
+        en: 'Read one archive to collect the fragment; the other two complete the journey.',
       },
       exits: { down: 'training-clearing' },
       contentRefs: [
@@ -97,8 +89,8 @@ const adventureWorldCandidate = {
       kind: 'projects',
       name: { fr: 'Atelier des projets', en: 'Project workshop' },
       hint: {
-        fr: 'Inspectez un projet, puis récupérez le fragment à la balise ; cinq autres réalisations restent à découvrir.',
-        en: 'Inspect one project, then claim the fragment at the beacon; five more builds remain to discover.',
+        fr: 'Inspectez un projet pour obtenir le fragment ; cinq autres réalisations restent à découvrir.',
+        en: 'Inspect one project to collect the fragment; five more builds remain to discover.',
       },
       exits: { right: 'training-clearing' },
       contentRefs: [
@@ -121,8 +113,8 @@ const adventureWorldCandidate = {
       kind: 'personal',
       name: { fr: 'Sentier personnel', en: 'Personal trail' },
       hint: {
-        fr: 'Épilogue facultatif : découvrez un intérêt, puis récupérez le fragment à la balise, ou explorez les quatre souvenirs.',
-        en: 'Optional epilogue: discover one interest, then claim the fragment at the beacon, or explore all four memories.',
+        fr: 'Épilogue facultatif : découvrez un intérêt pour obtenir le fragment, ou explorez les quatre souvenirs.',
+        en: 'Optional epilogue: discover one interest to collect the fragment, or explore all four memories.',
       },
       exits: { up: 'training-clearing' },
       contentRefs: [

@@ -6,8 +6,6 @@ import { portfolio } from '../../content/portfolio.data'
 import { getContentDetail, getSkillLabel, localize } from '../../content/selectors'
 import {
   ADVENTURE_FRAGMENT_IDS,
-  addDiscovery,
-  addFragment,
   addFlag,
   getNextProfessionalFragmentId,
   isAdventureComplete,
@@ -23,6 +21,7 @@ import { LanguageSwitch } from '../../shared/LanguageSwitch'
 import { normalizeLocale, useLanguage } from '../../shared/language'
 import { usePageMetadata } from '../../shared/usePageMetadata'
 import { AdventureGuide } from './AdventureGuide'
+import { collectContentProgress } from './collectContentProgress'
 import { PhaserHost } from './PhaserHost'
 import { QuestJournal } from './QuestJournal'
 import { TouchControls } from './TouchControls'
@@ -35,7 +34,6 @@ const copy = {
     objective: 'Objectif',
     fragment: 'Fragments du parcours',
     fragmentFound: 'Fragment obtenu',
-    fragmentReady: 'Balise active',
     close: 'Fermer',
     rotate: 'Tournez votre téléphone',
     rotateText: 'L’aventure se joue en paysage. Le portfolio classique reste disponible immédiatement.',
@@ -81,7 +79,6 @@ const copy = {
     objective: 'Objective',
     fragment: 'Journey fragments',
     fragmentFound: 'Fragment collected',
-    fragmentReady: 'Beacon active',
     close: 'Close',
     rotate: 'Rotate your phone',
     rotateText: 'The adventure is played in landscape. The classic portfolio remains immediately available.',
@@ -135,7 +132,6 @@ export function AdventurePage() {
   const initialProgress = useMemo(() => repository.load(), [repository])
   const [progress, setProgress] = useState<ProgressState>(initialProgress)
   const bridge = useMemo(() => new AdventureBridge({
-    collectedFragmentIds: initialProgress.fragments,
     discoveredContentKeys: initialProgress.discoveredContentKeys,
     tutorialCompleted: initialProgress.flags.includes(TUTORIAL_FLAG_ID),
     lastScreenId: getAdventureScreen(initialProgress.lastScreenId).id,
@@ -181,7 +177,7 @@ export function AdventurePage() {
   useEffect(() => bridge.onEvent((event) => {
     if (event.type === 'content') {
       setSelectedContent(event.reference)
-      commitProgress((current) => addDiscovery(current, getContentReferenceKey(event.reference)))
+      commitProgress((current) => collectContentProgress(current, event.reference))
     }
     else if (event.type === 'screen-changed') {
       setCurrentScreenId(event.screenId)
@@ -189,9 +185,6 @@ export function AdventurePage() {
     } else if (event.type === 'tutorial-completed') {
       commitProgress((current) => addFlag(current, TUTORIAL_FLAG_ID))
       setNotice(localize(adventureWorld.canvasCopy.tutorialComplete, routeLocale))
-    } else if (event.type === 'fragment-collected') {
-      commitProgress((current) => addFragment(current, event.fragmentId))
-      setNotice(localize(adventureWorld.canvasCopy.fragmentCollected, routeLocale))
     } else if (event.type === 'notice') setNotice(event.message)
   }), [bridge, commitProgress, routeLocale])
   useEffect(() => () => bridge.dispose(), [bridge])
@@ -205,11 +198,6 @@ export function AdventurePage() {
   const hasCurrentFragment = currentFragment
     ? progress.fragments.includes(currentFragment.id)
     : false
-  const currentFragmentReady = Boolean(
-    currentFragment
-    && currentScreen.contentRefs.some((reference) =>
-      progress.discoveredContentKeys.includes(getContentReferenceKey(reference))),
-  )
   const fragmentCount = ADVENTURE_FRAGMENT_IDS.filter((fragmentId) =>
     progress.fragments.includes(fragmentId)).length
   const professionalFragmentCount = PROFESSIONAL_FRAGMENT_IDS.filter((fragmentId) =>
@@ -273,7 +261,6 @@ export function AdventurePage() {
   const resetAdventure = useCallback(() => {
     const initial = repository.reset()
     bridge.setRuntimeState({
-      collectedFragmentIds: initial.fragments,
       discoveredContentKeys: initial.discoveredContentKeys,
       tutorialCompleted: false,
       lastScreenId: initial.lastScreenId,
@@ -298,7 +285,6 @@ export function AdventurePage() {
 
   useEffect(() => {
     bridge.setRuntimeState({
-      collectedFragmentIds: progress.fragments,
       discoveredContentKeys: progress.discoveredContentKeys,
       tutorialCompleted,
       lastScreenId: currentScreen.id,
@@ -416,7 +402,7 @@ export function AdventurePage() {
               <small>
                 {hasCurrentFragment
                   ? `${text.fragmentFound} · ${fragmentCount} / 4`
-                  : currentFragmentReady ? `${text.fragmentReady} · ${fragmentCount} / 4` : `${fragmentCount} / 4`}
+                  : `${fragmentCount} / 4`}
               </small>
             </div>
           </div>
@@ -469,13 +455,6 @@ export function AdventurePage() {
               locale={routeLocale}
               screenId={currentScreen.id}
               tutorialCompleted={tutorialCompleted}
-              fragmentState={currentFragment
-                ? hasCurrentFragment
-                  ? 'collected'
-                  : currentFragmentReady
-                    ? 'ready'
-                    : 'locked'
-                : undefined}
             />
             <div
               className="game-map-overlay"

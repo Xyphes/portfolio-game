@@ -193,7 +193,22 @@ export function ClassicPage() {
         </nav>
 
         <div className="sidebar-bottom">
-          <LanguageSwitch />
+          <div className="classic-mobile-controls">
+            <LanguageSwitch />
+            <button
+              ref={menuButtonRef}
+              type="button"
+              className="classic-menu-button"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="classic-mobile-menu"
+              aria-label={mobileMenuOpen ? text.closeMenu : text.menu}
+              onClick={() => setMobileMenuOpen((open) => !open)}
+            >
+              <span aria-hidden="true" />
+              <span aria-hidden="true" />
+              <span aria-hidden="true" />
+            </button>
+          </div>
           <Link className="mode-switch-link" to={`/${routeLocale}/adventure`}>
             <span className="tiny-pixels" aria-hidden="true" />
             {text.adventure}
@@ -207,19 +222,6 @@ export function ClassicPage() {
             <p className="eyebrow">{text.mode}</p>
             <p className="breadcrumb">{text.home} / {activeSectionLabel}</p>
           </div>
-          <button
-            ref={menuButtonRef}
-            type="button"
-            className="classic-menu-button"
-            aria-expanded={mobileMenuOpen}
-            aria-controls="classic-mobile-menu"
-            aria-label={mobileMenuOpen ? text.closeMenu : text.menu}
-            onClick={() => setMobileMenuOpen((open) => !open)}
-          >
-            <span aria-hidden="true" />
-            <span aria-hidden="true" />
-            <span aria-hidden="true" />
-          </button>
         </header>
 
         {mobileMenuOpen && (
