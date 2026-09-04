@@ -5,6 +5,7 @@ import { getSkillLabel, localize } from '../../content/selectors'
 import { LanguageSwitch } from '../../shared/LanguageSwitch'
 import { normalizeLocale, useLanguage } from '../../shared/language'
 import { usePageMetadata } from '../../shared/usePageMetadata'
+import { prepareAdventureOrientation } from '../adventure/orientation'
 
 const copy = {
   fr: {
@@ -209,7 +210,11 @@ export function ClassicPage() {
               <span aria-hidden="true" />
             </button>
           </div>
-          <Link className="mode-switch-link" to={`/${routeLocale}/adventure`}>
+          <Link
+            className="mode-switch-link"
+            to={`/${routeLocale}/adventure`}
+            onClick={prepareAdventureOrientation}
+          >
             <span className="tiny-pixels" aria-hidden="true" />
             {text.adventure}
           </Link>
@@ -251,7 +256,11 @@ export function ClassicPage() {
               {label}
             </button>
           ))}
-          <Link className="classic-mobile-mode-link" to={`/${routeLocale}/adventure`}>
+          <Link
+            className="classic-mobile-mode-link"
+            to={`/${routeLocale}/adventure`}
+            onClick={prepareAdventureOrientation}
+          >
             <span className="tiny-pixels" aria-hidden="true" />
             {text.adventure}
           </Link>

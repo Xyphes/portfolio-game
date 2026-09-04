@@ -4,6 +4,7 @@ import { localize } from '../../content/selectors'
 import { LanguageSwitch } from '../../shared/LanguageSwitch'
 import { useLanguage } from '../../shared/language'
 import { usePageMetadata } from '../../shared/usePageMetadata'
+import { prepareAdventureOrientation } from '../adventure/orientation'
 
 const copy = {
   fr: {
@@ -79,7 +80,11 @@ export function LandingPage() {
             <h2>{text.adventure}</h2>
             <p>{text.adventureDescription}</p>
           </div>
-          <Link className="primary-link gold" to={`/${locale}/adventure`}>
+          <Link
+            className="primary-link gold"
+            to={`/${locale}/adventure`}
+            onClick={prepareAdventureOrientation}
+          >
             {text.enterAdventure}<span aria-hidden="true"> →</span>
           </Link>
         </article>

@@ -28,7 +28,7 @@ import { TouchControls } from './TouchControls'
 import {
   requestAdventureFullscreen,
   requestLandscapeOrientation,
-  restorePortraitOrientation,
+  restoreAdventureOrientation,
 } from './orientation'
 import { useModalFocus } from './useModalFocus'
 
@@ -164,7 +164,6 @@ export function AdventurePage() {
     isProfessionalJourneyComplete(initialProgress),
   )
   const adventureCompletionWasReached = useRef(isAdventureComplete(initialProgress))
-  const orientationLockRef = useRef({ locked: false, enteredFullscreen: false })
   const orientationRestoreTimerRef = useRef<number | undefined>(undefined)
 
   useEffect(() => {
@@ -214,9 +213,6 @@ export function AdventurePage() {
 
       fullscreenRequestPending = true
       void requestAdventureFullscreen()
-        .then((enteredFullscreen) => {
-          if (enteredFullscreen) orientationLockRef.current.enteredFullscreen = true
-        })
         .finally(() => { fullscreenRequestPending = false })
     }
 
@@ -226,19 +222,19 @@ export function AdventurePage() {
       window.screen.orientation?.removeEventListener('change', enterFullscreenAfterRotation)
       window.removeEventListener('orientationchange', enterFullscreenAfterRotation)
       orientationRestoreTimerRef.current = window.setTimeout(() => {
-        void restorePortraitOrientation(orientationLockRef.current.enteredFullscreen)
+        void restoreAdventureOrientation()
       }, 0)
     }
+  }, [])
+
+  const restoreOrientationBeforeExit = useCallback(() => {
+    void restoreAdventureOrientation()
   }, [])
 
   const rotateToLandscape = useCallback(async () => {
     setOrientationRequestPending(true)
     setOrientationMessage(null)
     const result = await requestLandscapeOrientation()
-    orientationLockRef.current = {
-      locked: result.status === 'locked',
-      enteredFullscreen: result.enteredFullscreen,
-    }
     if (result.status === 'unsupported') setOrientationMessage(text.rotateUnavailable)
     setOrientationRequestPending(false)
   }, [text.rotateUnavailable])
@@ -366,7 +362,12 @@ export function AdventurePage() {
     <main className="adventure-shell">
       <header className="adventure-header">
         <div className="adventure-header-primary">
-          <Link className="adventure-brand" to="/" aria-label={text.mode}>
+          <Link
+            className="adventure-brand"
+            to="/"
+            aria-label={text.mode}
+            onClick={restoreOrientationBeforeExit}
+          >
             <span className="monogram" aria-hidden="true">WS</span>
           </Link>
           <button
@@ -383,7 +384,13 @@ export function AdventurePage() {
         </div>
         <div className="adventure-actions">
           <LanguageSwitch />
-          <Link className="classic-exit" to={`/${routeLocale}/classic`}>{text.classic}</Link>
+          <Link
+            className="classic-exit"
+            to={`/${routeLocale}/classic`}
+            onClick={restoreOrientationBeforeExit}
+          >
+            {text.classic}
+          </Link>
         </div>
       </header>
 
@@ -401,7 +408,13 @@ export function AdventurePage() {
         <h1>{text.rotate}</h1>
         <p>{text.rotateText}</p>
         {orientationMessage && <p className="orientation-message" role="status">{orientationMessage}</p>}
-        <Link className="primary-link" to={`/${routeLocale}/classic`}>{text.classic}</Link>
+        <Link
+          className="primary-link"
+          to={`/${routeLocale}/classic`}
+          onClick={restoreOrientationBeforeExit}
+        >
+          {text.classic}
+        </Link>
       </section>
 
       <section className="game-layout">
@@ -621,7 +634,11 @@ export function AdventurePage() {
             <h2 id="completion-title">{completionContent.title}</h2>
             <p id="completion-description">{completionContent.body}</p>
             <div className="completion-actions">
-              <Link className="primary-link gold" to={`/${routeLocale}/classic`}>
+              <Link
+                className="primary-link gold"
+                to={`/${routeLocale}/classic`}
+                onClick={restoreOrientationBeforeExit}
+              >
                 {text.viewPortfolio}
               </Link>
               {cvDocument && (

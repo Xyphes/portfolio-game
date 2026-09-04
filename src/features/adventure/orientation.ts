@@ -3,6 +3,8 @@ type LockableScreenOrientation = ScreenOrientation & {
   unlock?: () => void
 }
 
+let adventureOwnsFullscreen = false
+
 export type LandscapeOrientationResult = {
   status: 'locked' | 'unsupported'
   enteredFullscreen: boolean
@@ -30,14 +32,16 @@ export async function attemptLandscapeOrientation(
   }
 }
 
-export function requestLandscapeOrientation(): Promise<LandscapeOrientationResult> {
+export async function requestLandscapeOrientation(): Promise<LandscapeOrientationResult> {
   const orientation = window.screen.orientation as LockableScreenOrientation | undefined
   const lock = orientation?.lock?.bind(orientation, 'landscape')
   const requestFullscreen = !document.fullscreenElement && document.documentElement.requestFullscreen
     ? document.documentElement.requestFullscreen.bind(document.documentElement)
     : undefined
 
-  return attemptLandscapeOrientation(lock, requestFullscreen)
+  const result = await attemptLandscapeOrientation(lock, requestFullscreen)
+  if (result.enteredFullscreen) adventureOwnsFullscreen = true
+  return result
 }
 
 export async function attemptFullscreen(
@@ -52,12 +56,24 @@ export async function attemptFullscreen(
   }
 }
 
-export function requestAdventureFullscreen(): Promise<boolean> {
+export async function requestAdventureFullscreen(): Promise<boolean> {
   if (document.fullscreenElement) return Promise.resolve(false)
   const requestFullscreen = document.documentElement.requestFullscreen
     ? document.documentElement.requestFullscreen.bind(document.documentElement)
     : undefined
-  return attemptFullscreen(requestFullscreen)
+  const enteredFullscreen = await attemptFullscreen(requestFullscreen)
+  if (enteredFullscreen) adventureOwnsFullscreen = true
+  return enteredFullscreen
+}
+
+export function prepareAdventureOrientation(): void {
+  const coarsePointer = window.matchMedia?.('(pointer: coarse)').matches
+    ?? window.navigator.maxTouchPoints > 0
+  if (!coarsePointer) return
+
+  // Start the request synchronously from the navigation click while transient
+  // user activation is still available. The promise is deliberately not awaited.
+  void requestAdventureFullscreen()
 }
 
 export async function attemptPortraitRestore(
@@ -86,4 +102,10 @@ export function restorePortraitOrientation(exitFullscreen: boolean): Promise<voi
     ? document.exitFullscreen.bind(document)
     : undefined
   return attemptPortraitRestore(unlock, lockPortrait, exit)
+}
+
+export async function restoreAdventureOrientation(): Promise<void> {
+  const shouldExitFullscreen = adventureOwnsFullscreen && Boolean(document.fullscreenElement)
+  await restorePortraitOrientation(shouldExitFullscreen)
+  adventureOwnsFullscreen = false
 }
