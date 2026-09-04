@@ -328,7 +328,7 @@ const portfolioCandidate = {
   documents: [
     {
       id: 'cv',
-      label: { fr: 'Télécharger mon CV', en: 'Download my résumé' },
+      label: { fr: 'Télécharger mon CV', en: 'Download my resume' },
       href: '/documents/CV-Somkhit-Willy-2026-FR-ENG.pdf',
     },
     {

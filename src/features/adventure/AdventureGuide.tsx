@@ -55,7 +55,7 @@ const copy = {
     touchKeys: 'Directional pad · hold or slide · A',
     windows: 'Close a window',
     windowsKeys: 'Escape',
-    accessibility: 'All information, the résumé, and contact details remain available without playing.',
+    accessibility: 'All information, the resume, and contact details remain available without playing.',
     classic: 'Open classic mode',
     close: 'Start exploring',
   },
