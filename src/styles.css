@@ -216,6 +216,17 @@ a:focus-visible {
   text-transform: uppercase;
 }
 
+.section-index {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-index .classic-icon {
+  width: 16px;
+  height: 16px;
+}
+
 .primary-link,
 .ghost-button {
   display: inline-flex;
@@ -500,6 +511,9 @@ a:focus-visible {
 }
 
 .classic-nav button {
+  display: flex;
+  align-items: center;
+  gap: 11px;
   width: 100%;
   min-height: 44px;
   border: 0;
@@ -509,6 +523,18 @@ a:focus-visible {
   cursor: pointer;
   padding: 10px 14px;
   text-align: left;
+}
+
+.classic-nav .classic-icon {
+  width: 17px;
+  height: 17px;
+  color: rgba(169, 193, 160, 0.72);
+}
+
+.classic-nav button:hover .classic-icon,
+.classic-nav button:focus-visible .classic-icon,
+.classic-nav button.is-active .classic-icon {
+  color: var(--leaf);
 }
 
 .classic-nav button:hover,
@@ -667,11 +693,24 @@ a:focus-visible {
 }
 
 .skill-groups h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
   color: var(--muted);
   font: 700 10px/1.4 'Space Mono', monospace;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.classic-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.skill-groups h2 .classic-icon {
+  color: var(--leaf);
 }
 
 .skill-groups .skill-catalog {
@@ -739,10 +778,17 @@ a:focus-visible {
 }
 
 .interest-list span {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   border: 1px solid rgba(120, 212, 138, 0.38);
   background: rgba(120, 212, 138, 0.08);
   color: #d9ead5;
   padding: 13px 18px;
+}
+
+.interest-list .classic-icon {
+  color: var(--leaf);
 }
 
 .experience-panel {
@@ -888,6 +934,33 @@ a:focus-visible {
 .contact-list a:hover {
   border-color: rgba(120, 212, 138, 0.58);
   color: var(--leaf);
+}
+
+.document-grid > a > .classic-icon,
+.contact-label .classic-icon {
+  color: var(--gold);
+}
+
+.document-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.document-label .classic-icon {
+  color: var(--leaf);
+}
+
+.contact-list > a > .classic-icon {
+  width: 15px;
+  height: 15px;
+  color: var(--muted);
+}
+
+.contact-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .contact-list {
@@ -2215,6 +2288,9 @@ a:focus-visible {
   }
 
   .classic-mobile-nav button {
+    display: flex;
+    align-items: center;
+    gap: 11px;
     min-height: 44px;
     border: 0;
     border-left: 2px solid transparent;
@@ -2223,6 +2299,11 @@ a:focus-visible {
     cursor: pointer;
     padding: 10px 12px;
     text-align: left;
+  }
+
+  .classic-mobile-nav button .classic-icon {
+    width: 17px;
+    height: 17px;
   }
 
   .classic-mobile-nav button:hover,

@@ -55,4 +55,29 @@ describe('ClassicPage category navigation', () => {
     expect(menuButton).toHaveAttribute('aria-expanded', 'false')
     expect(mobileNavigation).toHaveAttribute('hidden')
   })
+
+  it('renders decorative icons for skills, interests, downloads, and contact methods', () => {
+    const { container } = renderClassicPage('#skills')
+    const navigation = screen.getByRole('navigation', { name: 'Main navigation' })
+
+    expect(within(navigation).getByRole('button', { name: 'Education' })
+      .querySelector('[data-icon="graduation"]')).toBeInTheDocument()
+    expect(container.querySelector('[data-icon="code"]')).toHaveAttribute('aria-hidden', 'true')
+    expect(container.querySelector('[data-icon="globe"]')).toBeInTheDocument()
+
+    fireEvent.click(within(navigation).getByRole('button', { name: 'Beyond code' }))
+    expect(container.querySelector('[data-icon="climbing"]')).toBeInTheDocument()
+    expect(container.querySelector('[data-icon="traveling"]')).toBeInTheDocument()
+
+    fireEvent.click(within(navigation).getByRole('button', { name: 'Documents' }))
+    expect(container.querySelectorAll('[data-icon="download"]')).toHaveLength(2)
+    expect(screen.queryByText('↓')).not.toBeInTheDocument()
+
+    fireEvent.click(within(navigation).getByRole('button', { name: 'Contact' }))
+    expect(container.querySelector('[data-icon="phone"]')).toBeInTheDocument()
+    expect(container.querySelector('[data-icon="email"]')).toBeInTheDocument()
+    expect(container.querySelector('[data-icon="github"]')).toBeInTheDocument()
+    expect(container.querySelector('[data-icon="linkedin"]')).toBeInTheDocument()
+    expect(container.querySelectorAll('[data-icon="external"]')).toHaveLength(4)
+  })
 })

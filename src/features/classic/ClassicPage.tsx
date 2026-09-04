@@ -6,6 +6,7 @@ import { LanguageSwitch } from '../../shared/LanguageSwitch'
 import { normalizeLocale, useLanguage } from '../../shared/language'
 import { usePageMetadata } from '../../shared/usePageMetadata'
 import { prepareAdventureOrientation } from '../adventure/orientation'
+import { ClassicIcon, type ClassicIconName } from './ClassicIcon'
 
 const copy = {
   fr: {
@@ -74,9 +75,41 @@ const sectionIds = [
 ] as const
 type SectionId = typeof sectionIds[number]
 
+const interestIcons: Record<string, ClassicIconName> = {
+  climbing: 'climbing',
+  crafting: 'crafting',
+  swimming: 'swimming',
+  traveling: 'traveling',
+}
+
+const contactIcons: Record<(typeof portfolio.links)[number]['kind'], ClassicIconName> = {
+  phone: 'phone',
+  email: 'email',
+  github: 'github',
+  linkedin: 'linkedin',
+  discord: 'people',
+}
+
 function getHashSection(): SectionId | undefined {
   const candidate = window.location.hash.slice(1)
   return sectionIds.find((sectionId) => sectionId === candidate)
+}
+
+function SectionIndex({
+  number,
+  label,
+  icon,
+}: {
+  number: string
+  label: string
+  icon: ClassicIconName
+}) {
+  return (
+    <p className="section-index">
+      <ClassicIcon name={icon} />
+      <span>{number} — {label}</span>
+    </p>
+  )
 }
 
 export function ClassicPage() {
@@ -89,21 +122,25 @@ export function ClassicPage() {
   const contentRef = useRef<HTMLDivElement>(null)
   const mobileMenuRef = useRef<HTMLElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
-  const skillGroups = [
-    { id: 'language', label: text.languageSkills },
-    { id: 'framework', label: text.frameworks },
-    { id: 'domain', label: text.domains },
-    { id: 'tool', label: text.tools },
+  const skillGroups: Array<{
+    id: 'language' | 'framework' | 'domain' | 'tool'
+    label: string
+    icon: ClassicIconName
+  }> = [
+    { id: 'language', label: text.languageSkills, icon: 'code' },
+    { id: 'framework', label: text.frameworks, icon: 'layers' },
+    { id: 'domain', label: text.domains, icon: 'compass' },
+    { id: 'tool', label: text.tools, icon: 'tool' },
   ] as const
-  const navigationItems: Array<{ id: SectionId; label: string }> = [
-    { id: 'about', label: text.about },
-    { id: 'skills', label: text.skills },
-    { id: 'education', label: text.education },
-    { id: 'experiences', label: text.experiences },
-    { id: 'projects', label: text.projects },
-    { id: 'interests', label: text.interests },
-    { id: 'documents', label: text.documents },
-    { id: 'contact', label: text.contact },
+  const navigationItems: Array<{ id: SectionId; label: string; icon: ClassicIconName }> = [
+    { id: 'about', label: text.about, icon: 'user' },
+    { id: 'skills', label: text.skills, icon: 'code' },
+    { id: 'education', label: text.education, icon: 'graduation' },
+    { id: 'experiences', label: text.experiences, icon: 'briefcase' },
+    { id: 'projects', label: text.projects, icon: 'rocket' },
+    { id: 'interests', label: text.interests, icon: 'compass' },
+    { id: 'documents', label: text.documents, icon: 'file' },
+    { id: 'contact', label: text.contact, icon: 'email' },
   ]
 
   useEffect(() => {
@@ -180,7 +217,7 @@ export function ClassicPage() {
         </Link>
 
         <nav className="classic-nav" aria-label={routeLocale === 'fr' ? 'Navigation principale' : 'Main navigation'}>
-          {navigationItems.map(({ id, label }) => (
+          {navigationItems.map(({ id, label, icon }) => (
             <button
               key={id}
               type="button"
@@ -188,7 +225,8 @@ export function ClassicPage() {
               aria-current={activeSectionId === id ? 'page' : undefined}
               onClick={() => selectSection(id)}
             >
-              {label}
+              <ClassicIcon name={icon} />
+              <span>{label}</span>
             </button>
           ))}
         </nav>
@@ -245,7 +283,7 @@ export function ClassicPage() {
           hidden={!mobileMenuOpen}
         >
           <span className="mode-kicker">{text.menu}</span>
-          {navigationItems.map(({ id, label }) => (
+          {navigationItems.map(({ id, label, icon }) => (
             <button
               key={id}
               type="button"
@@ -253,7 +291,8 @@ export function ClassicPage() {
               aria-current={activeSectionId === id ? 'page' : undefined}
               onClick={() => selectSection(id)}
             >
-              {label}
+              <ClassicIcon name={icon} />
+              <span>{label}</span>
             </button>
           ))}
           <Link
@@ -278,7 +317,7 @@ export function ClassicPage() {
           {activeSectionId === 'about' && (
             <>
               <section id="about" className="profile-intro">
-                <p className="section-index">01 — {text.about}</p>
+                <SectionIndex number="01" label={text.about} icon="user" />
                 <h1>{localize(portfolio.profile.title, routeLocale)}</h1>
                 <p>{localize(portfolio.profile.introduction, routeLocale)}</p>
                 <span className="availability">
@@ -298,11 +337,11 @@ export function ClassicPage() {
 
           {activeSectionId === 'skills' && (
             <section id="skills" className="classic-section">
-              <p className="section-index">02 — {text.skills}</p>
+              <SectionIndex number="02" label={text.skills} icon="code" />
               <div className="skill-groups">
                 {skillGroups.map((group) => (
                   <div key={group.id}>
-                    <h2>{group.label}</h2>
+                    <h2><ClassicIcon name={group.icon} />{group.label}</h2>
                     <div className="skill-list skill-catalog">
                       {portfolio.skills
                         .filter(({ category }) => category === group.id)
@@ -313,7 +352,7 @@ export function ClassicPage() {
                   </div>
                 ))}
                 <div>
-                  <h2>{text.spokenLanguages}</h2>
+                  <h2><ClassicIcon name="globe" />{text.spokenLanguages}</h2>
                   <div className="skill-list skill-catalog">
                     {portfolio.languages.map((language) => (
                       <span key={language.id}>
@@ -323,7 +362,7 @@ export function ClassicPage() {
                   </div>
                 </div>
                 <div>
-                  <h2>{text.softSkills}</h2>
+                  <h2><ClassicIcon name="people" />{text.softSkills}</h2>
                   <div className="skill-list skill-catalog">
                     {portfolio.softSkills.map((skill) => (
                       <span key={skill.id}>{localize(skill.label, routeLocale)}</span>
@@ -336,7 +375,7 @@ export function ClassicPage() {
 
           {activeSectionId === 'education' && (
             <section id="education" className="classic-section">
-              <p className="section-index">03 — {text.education}</p>
+              <SectionIndex number="03" label={text.education} icon="graduation" />
               <div className="education-grid">
                 {portfolio.education.map((education) => (
                   <article key={education.id} className="content-card">
@@ -355,7 +394,7 @@ export function ClassicPage() {
 
           {activeSectionId === 'experiences' && (
             <section id="experiences" className="classic-section">
-              <p className="section-index">04 — {text.experiences}</p>
+              <SectionIndex number="04" label={text.experiences} icon="briefcase" />
               <div className="experience-list">
                 {portfolio.experiences.map((experience) => (
                   <article key={experience.id} className="experience-panel">
@@ -393,7 +432,7 @@ export function ClassicPage() {
 
           {activeSectionId === 'projects' && (
             <section id="projects" className="classic-section">
-              <p className="section-index">05 — {text.projects}</p>
+              <SectionIndex number="05" label={text.projects} icon="rocket" />
               <div className="project-grid">
                 {portfolio.projects.map((project) => (
                   <article key={project.id} className="content-card project-card">
@@ -413,10 +452,13 @@ export function ClassicPage() {
 
           {activeSectionId === 'interests' && (
             <section id="interests" className="classic-section personal-section">
-              <p className="section-index">06 — {text.interests}</p>
+              <SectionIndex number="06" label={text.interests} icon="compass" />
               <div className="interest-list">
                 {portfolio.interests.map((interest) => (
-                  <span key={interest.id}>{localize(interest.label, routeLocale)}</span>
+                  <span key={interest.id}>
+                    <ClassicIcon name={interestIcons[interest.id] ?? 'compass'} />
+                    {localize(interest.label, routeLocale)}
+                  </span>
                 ))}
               </div>
             </section>
@@ -424,12 +466,15 @@ export function ClassicPage() {
 
           {activeSectionId === 'documents' && (
             <section id="documents" className="link-section">
-              <p className="section-index">07 — {text.documents}</p>
+              <SectionIndex number="07" label={text.documents} icon="file" />
               <div className="document-grid">
                 {portfolio.documents.map((document) => (
                   <a key={document.id} href={document.href} download>
-                    <span>{localize(document.label, routeLocale)}</span>
-                    <b aria-hidden="true">↓</b>
+                    <span className="document-label">
+                      <ClassicIcon name="file" />
+                      {localize(document.label, routeLocale)}
+                    </span>
+                    <ClassicIcon name="download" />
                   </a>
                 ))}
               </div>
@@ -438,7 +483,7 @@ export function ClassicPage() {
 
           {activeSectionId === 'contact' && (
             <section id="contact" className="link-section">
-              <p className="section-index">08 — {text.contact}</p>
+              <SectionIndex number="08" label={text.contact} icon="email" />
               <div className="contact-list">
                 {portfolio.links.map((link) => (
                   <a
@@ -447,8 +492,11 @@ export function ClassicPage() {
                     target={link.kind === 'github' || link.kind === 'linkedin' ? '_blank' : undefined}
                     rel="noreferrer"
                   >
-                    {localize(link.label, routeLocale)}
-                    <span aria-hidden="true">↗</span>
+                    <span className="contact-label">
+                      <ClassicIcon name={contactIcons[link.kind]} />
+                      {localize(link.label, routeLocale)}
+                    </span>
+                    <ClassicIcon name="external" />
                   </a>
                 ))}
               </div>
