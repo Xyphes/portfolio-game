@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { portfolioProfile } from '../../content/profile.data'
 import { localize } from '../../content/selectors'
 import { LanguageSwitch } from '../../shared/LanguageSwitch'
+import { ContactShortcut } from '../../shared/ContactShortcut'
 import { useLanguage } from '../../shared/language'
 import { usePageMetadata } from '../../shared/usePageMetadata'
 import { PixelBlastBackdrop } from '../../shared/PixelBlastBackdrop'
@@ -50,6 +51,7 @@ export function LandingPage() {
       <div className="ambient-grid" aria-hidden="true" />
       <p className="eyebrow landing-eyebrow">{text.eyebrow}</p>
       <header className="landing-header">
+        <ContactShortcut locale={locale} className="landing-contact-shortcut" />
         <LanguageSwitch />
       </header>
 

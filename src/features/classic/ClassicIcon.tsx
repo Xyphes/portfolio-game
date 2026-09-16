@@ -7,6 +7,10 @@ export type ClassicIconName =
   | 'people'
   | 'climbing'
   | 'crafting'
+  | 'leathercraft'
+  | 'jewelry'
+  | 'woodworking'
+  | 'lockpicking'
   | 'swimming'
   | 'traveling'
   | 'phone'
@@ -55,6 +59,14 @@ export function ClassicIcon({ name }: ClassicIconProps) {
       return <svg {...commonProps}><path d="M3 21 12 4l9 17M8 21l4-7 4 7" /><circle cx="16" cy="6" r="1.5" /></svg>
     case 'crafting':
       return <svg {...commonProps}><circle cx="6" cy="17" r="3" /><circle cx="18" cy="17" r="3" /><path d="m8.5 15.5 8-11M15.5 15.5l-8-11M9.5 8h5" /></svg>
+    case 'leathercraft':
+      return <svg {...commonProps}><path d="M4 8h16v11H4V8Z" /><path d="M8 8V5h8v3M4 12h16M14 14h3v2h-3" /></svg>
+    case 'jewelry':
+      return <svg {...commonProps}><path d="m4 9 4-5h8l4 5-8 11L4 9Z" /><path d="M4 9h16M8 4l4 5 4-5M8 9l4 11 4-11" /></svg>
+    case 'woodworking':
+      return <svg {...commonProps}><path d="m14 4 6 6-3 3-6-6 3-3Z" /><path d="m12.5 8.5-8 8a2.1 2.1 0 0 0 3 3l8-8M4 5h6M7 2v6" /></svg>
+    case 'lockpicking':
+      return <svg {...commonProps}><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3M3 4l5 5" /></svg>
     case 'swimming':
       return <svg {...commonProps}><circle cx="17" cy="6" r="2" /><path d="m4 13 5-3 4 3 4-3 3 2M3 17c2 0 2 2 4 2s2-2 4-2 2 2 4 2 2-2 4-2 2 2 2 2" /></svg>
     case 'traveling':

@@ -66,7 +66,9 @@ export function isInsideExitOpening(point: { x: number; y: number }, direction: 
 export function getContentPositions(count: number): WorldPoint[] {
   const singleRow: WorldPoint[] = [[120, 124], [240, 124], [360, 124]]
   const doubleRow: WorldPoint[] = [[92, 84], [240, 84], [388, 84], [92, 190], [240, 190], [388, 190]]
+  const sevenItemGrid: WorldPoint[] = [[80, 80], [186, 80], [294, 80], [400, 80], [120, 206], [240, 206], [360, 206]]
   if (count <= 3) return singleRow.slice(0, count)
   if (count === 4) return [[130, 88], [350, 88], [130, 194], [350, 194]]
+  if (count === 7) return sevenItemGrid
   return doubleRow.slice(0, count)
 }

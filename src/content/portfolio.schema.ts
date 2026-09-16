@@ -18,6 +18,10 @@ const documentSchema = z.object({
   id: z.string().trim().min(1),
   label: localizedTextSchema,
   href: z.string().startsWith('/'),
+  preview: z.object({
+    fr: z.string().startsWith('/'),
+    en: z.string().startsWith('/'),
+  }).optional(),
 })
 
 const experienceSchema = z.object({
@@ -52,6 +56,7 @@ const projectSchema = z.object({
 const interestSchema = z.object({
   id: z.string().trim().min(1),
   label: localizedTextSchema,
+  mediaFolder: z.string().regex(/^[a-z0-9-]+$/),
   publicationApproved: z.literal(true),
 })
 

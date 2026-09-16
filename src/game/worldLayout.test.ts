@@ -18,7 +18,7 @@ function containsPoint(
 
 describe('adventure world layout', () => {
   it('keeps every content marker inside the readable play area and well separated', () => {
-    for (const count of [3, 4, 6]) {
+    for (const count of [3, 4, 6, 7]) {
       const positions = getContentPositions(count)
       expect(positions).toHaveLength(count)
 

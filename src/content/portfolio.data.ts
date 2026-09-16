@@ -298,10 +298,13 @@ const portfolioCandidate = {
     },
   ],
   interests: [
-    { id: 'climbing', label: { fr: 'Escalade', en: 'Climbing' }, publicationApproved: true },
-    { id: 'crafting', label: { fr: 'Création manuelle', en: 'Crafting' }, publicationApproved: true },
-    { id: 'swimming', label: { fr: 'Natation', en: 'Swimming' }, publicationApproved: true },
-    { id: 'traveling', label: { fr: 'Voyage', en: 'Traveling' }, publicationApproved: true },
+    { id: 'climbing', label: { fr: 'Escalade', en: 'Climbing' }, mediaFolder: 'climbing', publicationApproved: true },
+    { id: 'leathercraft', label: { fr: 'Maroquinerie', en: 'Leathercraft' }, mediaFolder: 'leathercraft', publicationApproved: true },
+    { id: 'jewelry', label: { fr: 'Joaillerie', en: 'Jewelry' }, mediaFolder: 'jewelry', publicationApproved: true },
+    { id: 'woodworking', label: { fr: 'Menuiserie', en: 'Woodworking' }, mediaFolder: 'woodworking', publicationApproved: true },
+    { id: 'lockpicking', label: { fr: 'Crochetage de serrures', en: 'Lock picking' }, mediaFolder: 'lockpicking', publicationApproved: true },
+    { id: 'swimming', label: { fr: 'Natation', en: 'Swimming' }, mediaFolder: 'swimming', publicationApproved: true },
+    { id: 'traveling', label: { fr: 'Voyages', en: 'Travel' }, mediaFolder: 'traveling', publicationApproved: true },
   ],
   links: [
     {
@@ -330,6 +333,10 @@ const portfolioCandidate = {
       id: 'cv',
       label: { fr: 'Télécharger mon CV', en: 'Download my resume' },
       href: '/documents/CV-Somkhit-Willy-2026-FR-ENG.pdf',
+      preview: {
+        fr: '/documents/CV-preview-fr.png',
+        en: '/documents/CV-preview-en.png',
+      },
     },
     {
       id: 'recommendation',

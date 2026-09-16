@@ -10,11 +10,17 @@ describe('portfolio content', () => {
     expect(portfolio.experiences).toHaveLength(6)
     expect(portfolio.education).toHaveLength(3)
     expect(portfolio.projects).toHaveLength(6)
-    expect(portfolio.interests).toHaveLength(4)
+    expect(portfolio.interests).toHaveLength(7)
+    expect(getContentDetail({ kind: 'interest', id: 'lockpicking' }, 'fr').title).toBe('Crochetage de serrures')
+    expect(portfolio.interests.find(({ id }) => id === 'jewelry')?.mediaFolder).toBe('jewelry')
     expect(portfolio.profile.portrait.src).toBe('/assets/profile/willy-somkhit-portrait.jpg')
     expect(localize(portfolio.profile.portrait.alt, 'fr')).toBe('Portrait de Willy Somkhit')
     expect(getSkillLabel('typescript', 'fr')).toBe('TypeScript')
     expect(localize(portfolio.profile.title, 'en')).toBe('Full-stack Software Engineer')
+    expect(portfolio.documents.find(({ id }) => id === 'cv')?.preview).toEqual({
+      fr: '/documents/CV-preview-fr.png',
+      en: '/documents/CV-preview-en.png',
+    })
     expect(getContentDetail({ kind: 'education', id: 'epita' }, 'en').title).toBe('EPITA')
     expect(getContentDetail({ kind: 'project', id: '42sh' }, 'fr').skillIds).toContain('c')
   })

@@ -39,4 +39,12 @@ describe('adventure world content', () => {
       expect(branch.contentRefs.length).toBeGreaterThan(0)
     }
   })
+
+  it('exposes the seven distinct personal interests', () => {
+    const personalTrail = getAdventureScreen('personal-trail')
+
+    expect(personalTrail.contentRefs).toHaveLength(7)
+    expect(personalTrail.contentRefs).toContainEqual({ kind: 'interest', id: 'lockpicking' })
+    expect(personalTrail.contentRefs).not.toContainEqual({ kind: 'interest', id: 'crafting' })
+  })
 })

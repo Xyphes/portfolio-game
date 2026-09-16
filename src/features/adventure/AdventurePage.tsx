@@ -18,6 +18,7 @@ import {
 import { AdventureBridge } from '../../game/bridge/AdventureBridge'
 import { createBrowserProgressRepository } from '../../infrastructure/progressRepository'
 import { LanguageSwitch } from '../../shared/LanguageSwitch'
+import { ContactShortcut } from '../../shared/ContactShortcut'
 import { normalizeLocale, useLanguage } from '../../shared/language'
 import { usePageMetadata } from '../../shared/usePageMetadata'
 import { PixelBlastBackdrop } from '../../shared/PixelBlastBackdrop'
@@ -385,6 +386,7 @@ export function AdventurePage() {
           </button>
         </div>
         <div className="adventure-actions">
+          <ContactShortcut locale={routeLocale} className="adventure-contact-shortcut" />
           <LanguageSwitch />
           <Link
             className="classic-exit"
