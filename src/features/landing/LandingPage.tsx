@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { portfolioProfile } from '../../content/profile.data'
 import { localize } from '../../content/selectors'
+import { ContactIconLinks } from '../../shared/ContactIconLinks'
 import { LanguageSwitch } from '../../shared/LanguageSwitch'
-import { ContactShortcut } from '../../shared/ContactShortcut'
 import { useLanguage } from '../../shared/language'
 import { usePageMetadata } from '../../shared/usePageMetadata'
 import { PixelBlastBackdrop } from '../../shared/PixelBlastBackdrop'
@@ -10,7 +10,6 @@ import { prepareAdventureOrientation } from '../adventure/orientation'
 
 const copy = {
   fr: {
-    eyebrow: 'Portfolio interactif',
     lead: 'Choisissez une lecture directe ou explorez un premier fragment de parcours.',
     classic: 'Mode classique',
     classicDescription: 'Consulter immédiatement mon profil, mon expérience et mes documents.',
@@ -18,11 +17,9 @@ const copy = {
     adventureDescription: 'Entrer dans une salle 8-bit et découvrir la même expérience en jouant.',
     enterClassic: 'Consulter le portfolio',
     enterAdventure: 'Commencer l’aventure',
-    proof: 'Une seule source de contenu alimente les deux modes.',
     metaTitle: 'Willy Somkhit — Portfolio d’ingénieur logiciel',
   },
   en: {
-    eyebrow: 'Interactive portfolio',
     lead: 'Choose a direct reading experience or explore the first fragment of my journey.',
     classic: 'Classic mode',
     classicDescription: 'Read my profile, featured experience, and documents immediately.',
@@ -30,7 +27,6 @@ const copy = {
     adventureDescription: 'Enter an 8-bit room and discover the same experience through play.',
     enterClassic: 'View the portfolio',
     enterAdventure: 'Start the adventure',
-    proof: 'One shared content source powers both modes.',
     metaTitle: 'Willy Somkhit — Software Engineer Portfolio',
   },
 } as const
@@ -49,9 +45,7 @@ export function LandingPage() {
     <main className="landing-shell">
       <PixelBlastBackdrop />
       <div className="ambient-grid" aria-hidden="true" />
-      <p className="eyebrow landing-eyebrow">{text.eyebrow}</p>
       <header className="landing-header">
-        <ContactShortcut locale={locale} className="landing-contact-shortcut" />
         <LanguageSwitch />
       </header>
 
@@ -104,8 +98,7 @@ export function LandingPage() {
       </section>
 
       <footer className="landing-footer">
-        <span className="status-dot" aria-hidden="true" />
-        {text.proof}
+        <ContactIconLinks locale={locale} />
       </footer>
     </main>
   )

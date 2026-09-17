@@ -26,11 +26,21 @@ afterEach(() => {
 })
 
 describe('ClassicPage category navigation', () => {
-  it('offers direct email contact from About', () => {
-    renderClassicPage()
+  it.each([
+    ['en', 'Contact links', 'Phone', 'Email'],
+    ['fr', 'Contacts', 'Téléphone', 'E-mail'],
+  ] as const)('offers every contact method from About in %s', (locale, navigationLabel, phoneLabel, emailLabel) => {
+    renderClassicPage('', locale)
 
-    expect(screen.getByRole('link', { name: 'Contact me' }))
+    const contacts = screen.getByRole('navigation', { name: navigationLabel })
+    expect(within(contacts).getAllByRole('link')).toHaveLength(4)
+    expect(within(contacts).getByRole('link', { name: phoneLabel }))
+      .toHaveAttribute('href', 'tel:+33695523317')
+    expect(within(contacts).getByRole('link', { name: emailLabel }))
       .toHaveAttribute('href', 'mailto:willy.somkhit@epita.fr')
+    expect(within(contacts).getByRole('link', { name: 'GitHub' })).toBeInTheDocument()
+    expect(within(contacts).getByRole('link', { name: 'LinkedIn' })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Contact me' })).not.toBeInTheDocument()
   })
 
   it('replaces the right-hand content and preserves the active category in the hash', () => {
@@ -99,22 +109,28 @@ describe('ClassicPage category navigation', () => {
     expect(container.querySelectorAll('[data-icon="external"]')).toHaveLength(4)
   })
 
-  it('previews the new bilingual resume directly and keeps the PDF available', () => {
+  it('places the two downloads above the compact English resume preview', () => {
     renderClassicPage('#documents')
 
-    const languageChoices = screen.getByRole('group', { name: 'Resume preview language' })
-    expect(within(languageChoices).getByRole('button', { name: 'EN' }))
-      .toHaveAttribute('aria-pressed', 'true')
-    expect(within(screen.getByRole('region', { name: 'English resume preview' })).getByRole('img'))
+    const preview = screen.getByRole('figure', { name: 'Resume preview' })
+    expect(within(preview).getByRole('img', { name: /Second page/ }))
       .toHaveAttribute('src', '/documents/CV-preview-en.png')
+    const cvDownload = screen.getByRole('link', { name: /Download my resume/ })
+    const recommendationDownload = screen.getByRole('link', { name: /Recommendation letter/ })
+    expect(cvDownload).toHaveAttribute('href', '/documents/CV-Somkhit-Willy-2026-FR-ENG.pdf')
+    expect(cvDownload).toHaveAttribute('download')
+    expect(recommendationDownload).toHaveAttribute('download')
+    expect(cvDownload.compareDocumentPosition(preview) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(recommendationDownload.compareDocumentPosition(preview) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(screen.queryByRole('link', { name: /Open the full PDF/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('group', { name: 'Resume preview language' })).not.toBeInTheDocument()
+  })
 
-    fireEvent.click(within(languageChoices).getByRole('button', { name: 'FR' }))
-    expect(within(screen.getByRole('region', { name: 'Aperçu du CV en français' })).getByRole('img'))
+  it('shows page one of the resume automatically on the French route', () => {
+    renderClassicPage('#documents', 'fr')
+
+    expect(within(screen.getByRole('figure', { name: 'Le CV en aperçu' })).getByRole('img', { name: /Première page/ }))
       .toHaveAttribute('src', '/documents/CV-preview-fr.png')
-    expect(screen.getByRole('link', { name: /Open the full PDF/ }))
-      .toHaveAttribute('href', '/documents/CV-Somkhit-Willy-2026-FR-ENG.pdf')
-    expect(screen.getByRole('link', { name: /Download my resume/ }))
-      .toHaveAttribute('download')
   })
 
   it('shows existing videos in the carousel without autoplay or eager loading', () => {
