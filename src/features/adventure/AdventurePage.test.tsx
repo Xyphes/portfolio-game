@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import '@testing-library/jest-dom/vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { LanguageContext } from '../../shared/language'
@@ -21,10 +21,13 @@ afterEach(() => {
 })
 
 describe('AdventurePage contact', () => {
-  it('makes email contact available before playing or collecting fragments', () => {
+  it.each([
+    ['fr', 'Contacts', 'Téléphone', 'E-mail'],
+    ['en', 'Contact links', 'Phone', 'Email'],
+  ] as const)('shows all contact icons before playing in %s', (locale, label, phoneLabel, emailLabel) => {
     render(
-      <MemoryRouter initialEntries={['/en/adventure']}>
-        <LanguageContext.Provider value={{ locale: 'en', setLocale: vi.fn() }}>
+      <MemoryRouter initialEntries={[`/${locale}/adventure`]}>
+        <LanguageContext.Provider value={{ locale, setLocale: vi.fn() }}>
           <Routes>
             <Route path="/:locale/adventure" element={<AdventurePage />} />
           </Routes>
@@ -32,7 +35,17 @@ describe('AdventurePage contact', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByRole('link', { name: 'Contact me' }))
-      .toHaveAttribute('href', 'mailto:willy.somkhit@epita.fr')
+    const contacts = screen.getAllByRole('navigation', { name: label })
+    expect(contacts).toHaveLength(2)
+    for (const contactGroup of contacts) {
+      expect(within(contactGroup).getAllByRole('link')).toHaveLength(4)
+      expect(within(contactGroup).getByRole('link', { name: phoneLabel }))
+        .toHaveAttribute('href', 'tel:+33695523317')
+      expect(within(contactGroup).getByRole('link', { name: emailLabel }))
+        .toHaveAttribute('href', 'mailto:willy.somkhit@epita.fr')
+      expect(within(contactGroup).getByRole('link', { name: 'GitHub' })).toBeInTheDocument()
+      expect(within(contactGroup).getByRole('link', { name: 'LinkedIn' })).toBeInTheDocument()
+    }
+    expect(screen.queryByRole('link', { name: 'Contact me' })).not.toBeInTheDocument()
   })
 })

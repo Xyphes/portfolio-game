@@ -255,33 +255,6 @@ a:focus-visible {
   color: #211a06;
 }
 
-.contact-shortcut {
-  display: inline-flex;
-  min-height: 40px;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  border: 1px solid rgba(240, 203, 90, 0.48);
-  background: rgba(240, 203, 90, 0.08);
-  color: var(--gold);
-  padding: 0 13px;
-  font: 700 11px/1.2 'Space Mono', monospace;
-  white-space: nowrap;
-  transition: border-color 160ms ease, background-color 160ms ease;
-}
-
-.contact-shortcut svg {
-  width: 17px;
-  height: 17px;
-  flex: 0 0 auto;
-}
-
-.contact-shortcut:hover,
-.contact-shortcut:focus-visible {
-  border-color: var(--gold);
-  background: rgba(240, 203, 90, 0.17);
-}
-
 .landing-shell {
   position: relative;
   display: grid;
@@ -1622,8 +1595,13 @@ a:focus-visible {
   font-weight: 700;
 }
 
-.adventure-contact-shortcut {
-  min-height: 40px;
+.adventure-contact-links a {
+  width: 40px;
+  height: 40px;
+}
+
+.adventure-portrait-contacts {
+  display: none;
 }
 
 .game-layout {
@@ -3148,15 +3126,6 @@ a:focus-visible {
     gap: 7px;
   }
 
-  .adventure-contact-shortcut {
-    width: 40px;
-    padding: 0;
-  }
-
-  .adventure-contact-shortcut span {
-    display: none;
-  }
-
   .guide-steps,
   .guide-controls {
     grid-template-columns: 1fr;
@@ -3220,6 +3189,10 @@ a:focus-visible {
     display: none;
   }
 
+  .adventure-actions .adventure-contact-links {
+    display: none;
+  }
+
   .portrait-gate {
     display: grid;
     width: min(480px, 100%);
@@ -3243,6 +3216,41 @@ a:focus-visible {
     margin: 0 0 24px;
     color: var(--muted);
     line-height: 1.6;
+  }
+
+  .portrait-gate .adventure-portrait-contacts {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+  }
+}
+
+@media (max-width: 900px) and (max-height: 620px) and (orientation: portrait) {
+  .portrait-gate {
+    padding: 12px;
+  }
+
+  .portrait-gate .rotate-button {
+    width: 68px;
+    height: 68px;
+  }
+
+  .portrait-gate .rotate-icon {
+    font-size: 48px;
+  }
+
+  .portrait-gate h1 {
+    margin: 10px 0 6px;
+    font-size: 1.75rem;
+  }
+
+  .portrait-gate p {
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  .portrait-gate .adventure-portrait-contacts {
+    margin-top: 14px;
   }
 }
 
@@ -3348,8 +3356,32 @@ a:focus-visible {
 }
 
 @media (max-height: 560px) and (orientation: landscape) {
-  .adventure-contact-shortcut {
-    min-height: 36px;
+  .adventure-header-primary,
+  .adventure-actions {
+    gap: 6px;
+  }
+
+  .adventure-contact-links {
+    gap: 4px;
+  }
+
+  .adventure-contact-links a {
+    width: 32px;
+    height: 32px;
+  }
+
+  .adventure-contact-links .classic-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .information-button {
+    min-width: 36px;
+    font-size: 0;
+  }
+
+  .information-button span {
+    font-size: 12px;
   }
 
   .guide-panel {

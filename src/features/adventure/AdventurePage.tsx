@@ -18,7 +18,7 @@ import {
 import { AdventureBridge } from '../../game/bridge/AdventureBridge'
 import { createBrowserProgressRepository } from '../../infrastructure/progressRepository'
 import { LanguageSwitch } from '../../shared/LanguageSwitch'
-import { ContactShortcut } from '../../shared/ContactShortcut'
+import { ContactIconLinks } from '../../shared/ContactIconLinks'
 import { normalizeLocale, useLanguage } from '../../shared/language'
 import { usePageMetadata } from '../../shared/usePageMetadata'
 import { PixelBlastBackdrop } from '../../shared/PixelBlastBackdrop'
@@ -376,6 +376,7 @@ export function AdventurePage() {
           <button
             type="button"
             className="information-button"
+            aria-label={text.information}
             aria-haspopup="dialog"
             aria-expanded={showInfo}
             aria-controls="adventure-information-dialog"
@@ -386,7 +387,7 @@ export function AdventurePage() {
           </button>
         </div>
         <div className="adventure-actions">
-          <ContactShortcut locale={routeLocale} className="adventure-contact-shortcut" />
+          <ContactIconLinks locale={routeLocale} className="adventure-contact-links" />
           <LanguageSwitch />
           <Link
             className="classic-exit"
@@ -419,6 +420,7 @@ export function AdventurePage() {
         >
           {text.classic}
         </Link>
+        <ContactIconLinks locale={routeLocale} className="adventure-portrait-contacts" />
       </section>
 
       <section className="game-layout">
