@@ -117,7 +117,7 @@ export function TouchControls({ bridge, locale }: TouchControlsProps) {
       <button
         type="button"
         className="action-button"
-        aria-label={locale === 'fr' ? 'Interagir' : 'Interact'}
+        aria-label={locale === 'fr' ? 'Interagir ou attaquer' : 'Interact or attack'}
         aria-keyshortcuts="E Space"
         onPointerDown={(event) => {
           event.preventDefault()

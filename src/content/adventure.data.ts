@@ -4,11 +4,14 @@ import { portfolio } from './portfolio.data'
 const adventureWorldCandidate = {
   startScreenId: 'training-clearing',
   canvasCopy: {
-    action: { fr: 'Interagir : clic, toucher, Espace ou A', en: 'Interact: click, tap, Space or A' },
+    action: {
+      fr: 'Interagir ou attaquer : clic, toucher, Espace ou A',
+      en: 'Interact or attack: click, tap, Space or A',
+    },
     tutorialEnemy: { fr: 'Lueur d’essai', en: 'Practice wisp' },
     tutorialRequired: {
-      fr: 'Touchez la lueur avec le bouton d’action avant d’explorer.',
-      en: 'Touch the wisp with the action button before exploring.',
+      fr: 'Attaquez la lueur avec le bouton d’action avant d’explorer.',
+      en: 'Attack the wisp with the action button before exploring.',
     },
     tutorialComplete: {
       fr: 'Initiation terminée · les chemins sont ouverts.',
@@ -26,8 +29,8 @@ const adventureWorldCandidate = {
       kind: 'training',
       name: { fr: 'Clairière d’initiation', en: 'Training clearing' },
       hint: {
-        fr: 'Approchez la lueur puis utilisez une fois le bouton d’action.',
-        en: 'Walk near the wisp, then use the action button once.',
+        fr: 'Approchez la lueur puis attaquez une fois avec le bouton d’action.',
+        en: 'Walk near the wisp, then attack once with the action button.',
       },
       exits: {
         up: 'study-ruins',

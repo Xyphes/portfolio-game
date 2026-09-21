@@ -57,6 +57,7 @@ const copy = {
     journal: 'Journal de quête',
     guide: 'Aide et commandes',
     information: 'Informations',
+    contact: 'Me contacter',
     closeInformation: 'Fermer les informations',
     nextStep: 'Prochaine étape',
     routeTarget: 'Parcours principal · 5–10 min',
@@ -104,6 +105,7 @@ const copy = {
     journal: 'Quest journal',
     guide: 'Help and controls',
     information: 'Information',
+    contact: 'Contact me',
     closeInformation: 'Close information',
     nextStep: 'Next step',
     routeTarget: 'Main journey · 5–10 min',
@@ -527,6 +529,10 @@ export function AdventurePage() {
             <span>{text.guide}</span>
             <strong aria-hidden="true">?</strong>
           </button>
+          <div className="adventure-panel-contacts">
+            <strong>{text.contact}</strong>
+            <ContactIconLinks locale={routeLocale} className="adventure-panel-contact-links" />
+          </div>
           <small className="keyboard-help">{text.keyboard}</small>
         </aside>
 

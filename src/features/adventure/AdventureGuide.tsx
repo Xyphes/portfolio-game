@@ -12,7 +12,7 @@ const copy = {
   fr: {
     kicker: 'Aide et commandes',
     title: 'L’essentiel en quelques secondes',
-    intro: 'Aucun combat ni échec : explorez librement et rassemblez trois fragments pour terminer le parcours professionnel.',
+    intro: 'Les affrontements sont facultatifs et sans échec : explorez librement et rassemblez trois fragments pour terminer le parcours professionnel.',
     steps: [
       ['1', 'Choisissez une voie', 'Depuis la clairière centrale, prenez l’une des trois voies professionnelles dans l’ordre que vous préférez.'],
       ['2', 'Découvrez un récit', 'Approchez-vous d’un livre ou d’un personnage, puis utilisez l’action pour consulter une expérience, une étude ou un projet. Le fragment de la zone est obtenu immédiatement.'],
@@ -22,7 +22,7 @@ const copy = {
     controls: 'Commandes',
     move: 'Se déplacer',
     moveKeys: 'Flèches · ZQSD · WASD',
-    action: 'Interagir',
+    action: 'Interagir ou attaquer',
     actionKeys: 'E · Espace · bouton A',
     mouse: 'Souris',
     mouseKeys: 'Cliquer une destination ou un élément',
@@ -37,7 +37,7 @@ const copy = {
   en: {
     kicker: 'Help and controls',
     title: 'The essentials in a few seconds',
-    intro: 'There is no combat or failure: explore freely and collect three fragments to complete the professional journey.',
+    intro: 'Encounters are optional and failure-free: explore freely and collect three fragments to complete the professional journey.',
     steps: [
       ['1', 'Choose a path', 'From the central clearing, take any of the three professional paths in whichever order you prefer.'],
       ['2', 'Discover a story', 'Walk near a book or character, then use the action control to read about an experience, education, or project. The area fragment is awarded immediately.'],
@@ -47,7 +47,7 @@ const copy = {
     controls: 'Controls',
     move: 'Move',
     moveKeys: 'Arrow keys · WASD · ZQSD',
-    action: 'Interact',
+    action: 'Interact or attack',
     actionKeys: 'E · Space · A button',
     mouse: 'Mouse',
     mouseKeys: 'Click a destination or an item',

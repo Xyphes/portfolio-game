@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import '@testing-library/jest-dom/vitest'
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { LanguageContext } from '../../shared/language'
@@ -47,5 +47,8 @@ describe('AdventurePage contact', () => {
       expect(within(contactGroup).getByRole('link', { name: 'LinkedIn' })).toBeInTheDocument()
     }
     expect(screen.queryByRole('link', { name: 'Contact me' })).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: locale === 'fr' ? 'Informations' : 'Information' }))
+    expect(screen.getAllByRole('navigation', { name: label })).toHaveLength(3)
   })
 })

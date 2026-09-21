@@ -1604,6 +1604,26 @@ a:focus-visible {
   display: none;
 }
 
+.adventure-panel-contacts {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  color: var(--paper);
+  font-size: 12px;
+}
+
+.adventure-panel-contact-links {
+  gap: 6px;
+}
+
+.adventure-panel-contact-links a {
+  width: 36px;
+  height: 36px;
+  border-color: rgba(240, 203, 90, 0.45);
+  background: rgba(4, 16, 9, 0.88);
+  color: var(--gold);
+}
+
 .game-layout {
   position: relative;
   z-index: 1;
@@ -3469,6 +3489,56 @@ a:focus-visible {
   .information-button {
     min-height: 36px;
     padding: 5px 10px;
+  }
+}
+
+@media (min-width: 901px) and (hover: hover) and (pointer: fine) {
+  .game-column {
+    --desktop-control-space: clamp(370px, 38cqw, 480px);
+    container-type: size;
+  }
+
+  .game-frame {
+    width: min(
+      calc(100cqw - var(--desktop-control-space)),
+      calc(166.667cqh - 8px)
+    );
+    max-width: none;
+    max-height: calc(100cqh - 2px);
+    aspect-ratio: 5 / 3;
+  }
+
+  .game-runtime {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+  }
+
+  .touch-controls {
+    padding-inline: clamp(18px, 2.5cqw, 32px);
+  }
+
+  .dpad {
+    width: clamp(144px, 12cqw, 176px);
+    height: clamp(144px, 12cqw, 176px);
+  }
+
+  .dpad button {
+    font-size: 20px;
+  }
+
+  .action-button {
+    width: clamp(104px, 8.5cqw, 124px);
+    height: clamp(104px, 8.5cqw, 124px);
+  }
+
+  .action-button span {
+    font-size: 34px;
+  }
+
+  .action-button small {
+    margin-top: -24px;
+    font-size: 12px;
   }
 }
 
