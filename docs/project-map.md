@@ -23,7 +23,7 @@ Le récit détaillé des jalons reste dans [`docs/architecture.md`](architecture
 | Contrôles tactiles, pad virtuel ou bouton A | `src/features/adventure/TouchControls.tsx` | `virtualJoystick.ts`, tests associés, styles `.touch-*` et media queries |
 | Rotation, plein écran et retour portrait | `src/features/adventure/orientation.ts` | intégration dans `AdventurePage.tsx`, `orientation.test.ts` |
 | Monde, salles, sorties, fragments et références de contenu | `src/content/adventure.data.ts` | `adventure.schema.ts`, `worldLayout.ts`, tests de contenu |
-| Décorations, mobs et patrouilles par type de salle | `src/game/adventureEncounters.ts` | `createAdventureGame.ts`, `adventureEncounters.test.ts` |
+| Décorations, collisions, mode monstres et points de vie | `src/game/adventureEncounters.ts`, `src/game/createAdventureGame.ts`, `src/game/bridge/AdventureBridge.ts`, `src/features/adventure/AdventurePage.tsx` | `adventureEncounters.test.ts`, `AdventureBridge.test.ts`, `AdventurePage.test.tsx` |
 | Gameplay Phaser, joueur, collisions, interactions et sprites | `src/game/createAdventureGame.ts` | `worldLayout.ts`, `src/game/bridge/AdventureBridge.ts`, assets aventure |
 | Communication React <-> Phaser | `src/game/bridge/AdventureBridge.ts` | `PhaserHost.tsx`, `createAdventureGame.ts`, test du bridge |
 | Position ou taille du canvas et des commandes aventure | `src/styles.css` | `AdventurePage.tsx`, `TouchControls.tsx`, vérifier PC sans casser le téléphone |
@@ -95,10 +95,11 @@ Les styles du projet sont centralisés dans `src/styles.css`. Chercher d'abord l
 
 - `AdventurePage.tsx` : état React, progression, dialogues, orientation et actions globales.
 - `PhaserHost.tsx` : cycle de vie du jeu et chargement différé.
-- `createAdventureGame.ts` : scène Phaser, joueur, sprites, clavier, collisions et interactions.
+- `createAdventureGame.ts` : scène Phaser, joueur, sprites, clavier, collisions, respawn et interactions.
+- `mobPatrol.ts` : inversion de direction des monstres aux limites de leur patrouille ou devant un obstacle.
 - `adventureEncounters.ts` : configuration déclarative des décorations et des mobs de chaque type de salle.
 - `AdventureBridge.ts` : événements et commandes typés entre React et Phaser.
-- `worldLayout.ts` : viewport, obstacles, ouvertures et positions des contenus.
+- `worldLayout.ts` : viewport, obstacles, ouvertures, haies supplémentaires de la première salle et positions des contenus.
 - `TouchControls.tsx` + `virtualJoystick.ts` : pad tactile glissant et action A.
 - `AdventureCanvasOverlay.tsx` : éléments React superposés au canvas.
 - `QuestJournal.tsx` et `AdventureGuide.tsx` : journal et aide.

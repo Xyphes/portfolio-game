@@ -6,6 +6,7 @@ import {
   getContentPositions,
   isInsideExitOpening,
   SCREEN_OBSTACLES,
+  TRAINING_HEDGE_CLUSTERS,
 } from './worldLayout'
 
 function containsPoint(
@@ -80,5 +81,14 @@ describe('adventure world layout', () => {
     expect(isInsideExitOpening({ x: 120, y: 8 }, 'up')).toBe(false)
     expect(isInsideExitOpening({ x: 8, y: 144 }, 'left')).toBe(true)
     expect(isInsideExitOpening({ x: 8, y: 72 }, 'left')).toBe(false)
+  })
+
+  it('keeps the first clearing open between its tutorial and four exits', () => {
+    expect(SCREEN_OBSTACLES.training).toHaveLength(0)
+    for (const cluster of TRAINING_HEDGE_CLUSTERS) {
+      for (const [x, y] of [[240, 8], [240, 138], [240, 220], [240, 280], [8, 144], [472, 144]] as const) {
+        expect(containsPoint(cluster, x, y)).toBe(false)
+      }
+    }
   })
 })

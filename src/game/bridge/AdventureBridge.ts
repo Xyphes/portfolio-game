@@ -8,6 +8,7 @@ export type AdventureEvent =
   | { type: 'content'; reference: ContentReference }
   | { type: 'screen-changed'; screenId: string }
   | { type: 'tutorial-completed' }
+  | { type: 'health-changed'; health: number }
   | { type: 'notice'; message: string }
 
 export type AdventureRuntimeState = {
@@ -15,6 +16,7 @@ export type AdventureRuntimeState = {
   tutorialCompleted: boolean
   lastScreenId: string
   inputEnabled: boolean
+  monsterModeEnabled: boolean
 }
 
 const defaultRuntimeState: AdventureRuntimeState = {
@@ -22,6 +24,7 @@ const defaultRuntimeState: AdventureRuntimeState = {
   tutorialCompleted: false,
   lastScreenId: 'training-clearing',
   inputEnabled: true,
+  monsterModeEnabled: false,
 }
 
 export class AdventureBridge {

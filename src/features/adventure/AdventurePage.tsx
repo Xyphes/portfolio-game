@@ -58,6 +58,10 @@ const copy = {
     guide: 'Aide et commandes',
     information: 'Informations',
     contact: 'Me contacter',
+    monsterMode: 'Mode monstres',
+    monsterModeOn: 'Activé',
+    monsterModeOff: 'Désactivé',
+    health: 'Points de vie',
     closeInformation: 'Fermer les informations',
     nextStep: 'Prochaine étape',
     routeTarget: 'Parcours principal · 5–10 min',
@@ -106,6 +110,10 @@ const copy = {
     guide: 'Help and controls',
     information: 'Information',
     contact: 'Contact me',
+    monsterMode: 'Monster mode',
+    monsterModeOn: 'On',
+    monsterModeOff: 'Off',
+    health: 'Health',
     closeInformation: 'Close information',
     nextStep: 'Next step',
     routeTarget: 'Main journey · 5–10 min',
@@ -148,6 +156,7 @@ export function AdventurePage() {
     discoveredContentKeys: initialProgress.discoveredContentKeys,
     tutorialCompleted: initialProgress.flags.includes(TUTORIAL_FLAG_ID),
     lastScreenId: getAdventureScreen(initialProgress.lastScreenId).id,
+    monsterModeEnabled: false,
   }), [initialProgress])
   const [selectedContent, setSelectedContent] = useState<ContentReference | null>(null)
   const [currentScreenId, setCurrentScreenId] = useState(
@@ -157,6 +166,8 @@ export function AdventurePage() {
   const [showJournal, setShowJournal] = useState(false)
   const [showGuide, setShowGuide] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
+  const [monsterModeEnabled, setMonsterModeEnabled] = useState(false)
+  const [playerHealth, setPlayerHealth] = useState(3)
   const [orientationRequestPending, setOrientationRequestPending] = useState(false)
   const [orientationMessage, setOrientationMessage] = useState<string | null>(null)
   const [gameSessionKey, setGameSessionKey] = useState(0)
@@ -201,6 +212,8 @@ export function AdventurePage() {
     } else if (event.type === 'tutorial-completed') {
       commitProgress((current) => addFlag(current, TUTORIAL_FLAG_ID))
       setNotice(localize(adventureWorld.canvasCopy.tutorialComplete, routeLocale))
+    } else if (event.type === 'health-changed') {
+      setPlayerHealth(event.health)
     } else if (event.type === 'notice') setNotice(event.message)
   }), [bridge, commitProgress, routeLocale])
   useEffect(() => () => bridge.dispose(), [bridge])
@@ -312,6 +325,20 @@ export function AdventurePage() {
   const closeJournal = useCallback(() => setShowJournal(false), [])
   const closeGuide = useCallback(() => setShowGuide(false), [])
   const closeInfo = useCallback(() => setShowInfo(false), [])
+  const toggleMonsterMode = useCallback(() => {
+    const enabled = !monsterModeEnabled
+    setMonsterModeEnabled(enabled)
+    setPlayerHealth(3)
+    if (enabled) {
+      const startScreenId = adventureWorld.startScreenId
+      bridge.setRuntimeState({ monsterModeEnabled: true, lastScreenId: startScreenId })
+      setCurrentScreenId(startScreenId)
+      commitProgress((current) => setLastScreen(current, startScreenId))
+    } else {
+      bridge.setRuntimeState({ monsterModeEnabled: false })
+    }
+    setGameSessionKey((session) => session + 1)
+  }, [bridge, commitProgress, monsterModeEnabled])
   const resetAdventure = useCallback(() => {
     const initial = repository.reset()
     bridge.setRuntimeState({
@@ -342,9 +369,10 @@ export function AdventurePage() {
       discoveredContentKeys: progress.discoveredContentKeys,
       tutorialCompleted,
       lastScreenId: currentScreen.id,
+      monsterModeEnabled,
       inputEnabled: !dialogueContent && !completionDialog && !showJournal && !showGuide && !showInfo,
     })
-  }, [bridge, completionDialog, currentScreen.id, dialogueContent, progress.discoveredContentKeys, progress.fragments, showGuide, showInfo, showJournal, tutorialCompleted])
+  }, [bridge, completionDialog, currentScreen.id, dialogueContent, monsterModeEnabled, progress.discoveredContentKeys, progress.fragments, showGuide, showInfo, showJournal, tutorialCompleted])
 
   const completionContent = completionDialog === 'personal'
     ? {
@@ -389,6 +417,17 @@ export function AdventurePage() {
           </button>
         </div>
         <div className="adventure-actions">
+          <button
+            type="button"
+            className={monsterModeEnabled ? 'monster-mode-toggle is-active' : 'monster-mode-toggle'}
+            aria-pressed={monsterModeEnabled}
+            aria-label={`${text.monsterMode} · ${monsterModeEnabled ? text.monsterModeOn : text.monsterModeOff}`}
+            onClick={toggleMonsterMode}
+          >
+            <span aria-hidden="true">◆</span>
+            <span>{text.monsterMode}</span>
+            <strong>{monsterModeEnabled ? text.monsterModeOn : text.monsterModeOff}</strong>
+          </button>
           <ContactIconLinks locale={routeLocale} className="adventure-contact-links" />
           <LanguageSwitch />
           <Link
@@ -538,6 +577,21 @@ export function AdventurePage() {
 
         <div className="game-column">
           <div className="game-frame">
+            {monsterModeEnabled && (
+              <div
+                className="monster-health"
+                role="status"
+                aria-label={`${text.health}: ${playerHealth} / 3`}
+              >
+                {[0, 1, 2].map((heart) => (
+                  <span
+                    key={heart}
+                    className={heart < playerHealth ? 'is-full' : 'is-empty'}
+                    aria-hidden="true"
+                  />
+                ))}
+              </div>
+            )}
             <PhaserHost
               key={gameSessionKey}
               bridge={bridge}

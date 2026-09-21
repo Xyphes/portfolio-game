@@ -16,12 +16,23 @@ const BORDER_CENTER = 8
 const BORDER_THICKNESS = 16
 
 export const SCREEN_OBSTACLES = {
-  training: [[130, 88, 64, 16], [350, 206, 64, 16]],
+  training: [],
   experience: [[166, 138, 48, 16], [314, 138, 48, 16]],
-  studies: [[120, 190, 48, 16], [360, 190, 48, 16]],
-  projects: [[166, 138, 48, 16], [314, 138, 48, 16]],
-  personal: [[240, 140, 64, 16]],
+  studies: [[360, 190, 48, 16]],
+  projects: [],
+  personal: [],
 } as const satisfies Record<AdventureScreen['kind'], readonly WorldObstacle[]>
+
+// Additional hedge depth in the first clearing. Every rectangle is rendered as
+// 16 px bush tiles and receives the same-size static collision in Phaser.
+export const TRAINING_HEDGE_CLUSTERS: readonly WorldObstacle[] = [
+  [48, 24, 64, 16], [152, 24, 64, 16], [328, 24, 80, 16], [432, 24, 64, 16],
+  [32, 40, 32, 16], [152, 40, 32, 16], [440, 40, 32, 16],
+  [32, 72, 32, 48], [456, 72, 16, 48],
+  [32, 232, 32, 48], [456, 232, 16, 48],
+  [48, 264, 64, 16], [152, 264, 64, 16],
+  [328, 264, 80, 16], [432, 264, 64, 16],
+]
 
 export function getBoundaryObstacles(screen: Pick<AdventureScreen, 'exits'>): WorldObstacle[] {
   const horizontalWalls = (y: number, hasExit: boolean): WorldObstacle[] => hasExit

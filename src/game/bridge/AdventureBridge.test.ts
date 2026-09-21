@@ -64,4 +64,17 @@ describe('AdventureBridge', () => {
     bridge.emitPlayerVisual({ x: 190, y: 120, frame: 6, visible: false })
     expect(visualListener).toHaveBeenCalledTimes(2)
   })
+
+  it('keeps monster mode opt-in and exposes health updates through typed events', () => {
+    const bridge = new AdventureBridge()
+    const listener = vi.fn()
+    bridge.onEvent(listener)
+
+    expect(bridge.getRuntimeState().monsterModeEnabled).toBe(false)
+    bridge.setRuntimeState({ monsterModeEnabled: true })
+    bridge.emitEvent({ type: 'health-changed', health: 2 })
+
+    expect(bridge.getRuntimeState().monsterModeEnabled).toBe(true)
+    expect(listener).toHaveBeenCalledWith({ type: 'health-changed', health: 2 })
+  })
 })

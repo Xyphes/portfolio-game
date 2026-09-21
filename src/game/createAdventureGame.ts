@@ -4,13 +4,22 @@ import type { Locale } from '../content/portfolio.schema'
 import { localize } from '../content/selectors'
 import { getPointerMovement } from '../domain/pointerNavigation'
 import type { AdventureBridge } from './bridge/AdventureBridge'
-import { SCREEN_DECORATIONS, SCREEN_MOBS, type MobSpawn } from './adventureEncounters'
+import { nextPatrolDirection, type PatrolDirection } from './mobPatrol'
+import {
+  DECORATION_DEFINITIONS,
+  SCREEN_DECORATIONS,
+  SCREEN_MOBS,
+  type DecorationAtlas,
+  type DecorationTexture,
+  type MobSpawn,
+} from './adventureEncounters'
 import {
   ADVENTURE_VIEWPORT,
   getBoundaryObstacles,
   getContentPositions,
   isInsideExitOpening,
   SCREEN_OBSTACLES,
+  TRAINING_HEDGE_CLUSTERS,
 } from './worldLayout'
 
 type CreateAdventureGameOptions = {
@@ -23,10 +32,20 @@ type CreateAdventureGameOptions = {
 const SCREEN_WIDTH = ADVENTURE_VIEWPORT.width
 const SCREEN_HEIGHT = ADVENTURE_VIEWPORT.height
 const ASSET_ROOT = '/assets/adventure/ninja-adventure'
-const HERO_KEY = 'hero'
-const GUIDE_KEY = 'guide'
-const GUARDIAN_KEY = 'practice-guardian'
+const PLAYER_KEY = 'guide'
+const NPC_KEYS = ['npc-villager', 'npc-villager-2', 'npc-old-woman'] as const
+const MONSTER_KEYS = ['monster-slime', 'monster-bat', 'monster-mushroom'] as const
 const FLOOR_KEY = 'forest-floor-tileset'
+const NATURE_KEY = 'nature-tileset'
+const VILLAGE_KEY = 'village-tileset'
+const ELEMENTS_KEY = 'elements-tileset'
+const CAMP_KEY = 'camp-tileset'
+const DECORATION_ATLAS_KEYS: Record<DecorationAtlas, string> = {
+  nature: NATURE_KEY,
+  village: VILLAGE_KEY,
+  elements: ELEMENTS_KEY,
+  camp: CAMP_KEY,
+}
 const PLAYER_SPEED = 96
 
 type PointerTarget = {
@@ -47,14 +66,14 @@ export async function createAdventureGame({
   type RoamingMob = {
     sprite: Phaser.GameObjects.Sprite
     spawn: MobSpawn
-    direction: 1 | -1
+    direction: PatrolDirection
   }
 
   class AdventureWorldScene extends Phaser.Scene {
     private player!: Phaser.GameObjects.Sprite
     private pointerMarker?: Phaser.GameObjects.Arc
     private pointerTarget?: PointerTarget
-    private tutorialEnemy?: Phaser.GameObjects.Sprite
+    private tutorialEnemy?: Phaser.GameObjects.Image
     private readonly mobs: RoamingMob[] = []
     private readonly colliders: Phaser.Physics.Arcade.Collider[] = []
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -69,6 +88,8 @@ export async function createAdventureGame({
     private lastFacing: AdventureDirection = 'down'
     private transitioning = false
     private noticeAvailableAt = 0
+    private damageAvailableAt = 0
+    private playerHealth = 3
 
     constructor() {
       super('adventure-world')
@@ -76,10 +97,14 @@ export async function createAdventureGame({
 
     preload() {
       const characterSheet = { frameWidth: 16, frameHeight: 16 }
-      this.load.spritesheet(HERO_KEY, `${ASSET_ROOT}/hero.png`, characterSheet)
-      this.load.spritesheet(GUIDE_KEY, `${ASSET_ROOT}/guide.png`, characterSheet)
-      this.load.spritesheet(GUARDIAN_KEY, `${ASSET_ROOT}/practice-guardian.png`, characterSheet)
+      this.load.spritesheet(PLAYER_KEY, `${ASSET_ROOT}/guide.png`, characterSheet)
+      for (const key of NPC_KEYS) this.load.spritesheet(key, `${ASSET_ROOT}/${key}.png`, characterSheet)
+      for (const key of MONSTER_KEYS) this.load.spritesheet(key, `${ASSET_ROOT}/${key}.png`, characterSheet)
       this.load.image(FLOOR_KEY, `${ASSET_ROOT}/tileset-floor.png`)
+      this.load.image(NATURE_KEY, `${ASSET_ROOT}/tileset-nature.png`)
+      this.load.image(VILLAGE_KEY, `${ASSET_ROOT}/tileset-village-abandoned.png`)
+      this.load.image(ELEMENTS_KEY, `${ASSET_ROOT}/tileset-elements.png`)
+      this.load.image(CAMP_KEY, `${ASSET_ROOT}/tileset-camp.png`)
       this.load.image('grass', `${ASSET_ROOT}/grass.png`)
       this.load.image('crate', `${ASSET_ROOT}/crate.png`)
       this.load.image('pot', `${ASSET_ROOT}/pot.png`)
@@ -92,7 +117,7 @@ export async function createAdventureGame({
       this.registerPackFrames()
       this.registerHeroAnimations()
 
-      this.player = this.add.sprite(240, 220, HERO_KEY, 0).setDepth(5)
+      this.player = this.add.sprite(240, 220, PLAYER_KEY, 0).setDepth(5)
       this.physics.add.existing(this.player)
       this.publishPlayerVisual()
 
@@ -119,6 +144,9 @@ export async function createAdventureGame({
       this.input.on('pointerdown', this.handlePointerInput, this)
 
       this.drawCurrentScreen()
+      if (bridge.getRuntimeState().monsterModeEnabled) {
+        bridge.emitEvent({ type: 'health-changed', health: this.playerHealth })
+      }
       bridge.emitEvent({ type: 'screen-changed', screenId: this.currentScreenId })
     }
 
@@ -208,11 +236,16 @@ export async function createAdventureGame({
       const screen = getAdventureScreen(this.currentScreenId)
       this.currentScreenId = screen.id
 
-      const floor = this.track(
-        this.add.tileSprite(240, 144, SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_KEY, 'green-ground').setDepth(0),
-      )
-      floor.setTileScale(1)
-      this.drawDecorations(screen)
+      if (screen.kind === 'training') {
+        this.track(this.add.rectangle(240, 144, SCREEN_WIDTH, SCREEN_HEIGHT, 0xffdcad).setDepth(0))
+      } else if (screen.kind === 'projects') {
+        this.drawProjectCourtyard()
+      } else {
+        this.track(
+          this.add.tileSprite(240, 144, SCREEN_WIDTH, SCREEN_HEIGHT, FLOOR_KEY, 'green-ground').setDepth(0),
+        )
+      }
+      const solidDecorations = this.drawDecorations(screen)
 
       const walls = [
         ...this.drawForestBorder(screen),
@@ -225,7 +258,37 @@ export async function createAdventureGame({
       if (screen.kind === 'training') this.drawTrainingScreen()
       else if (screen.contentStatus === 'ready') this.drawContentScreen(screen)
       else this.drawAwaitingContentScreen()
-      this.drawRoamingMobs(screen, walls)
+      this.drawRoamingMobs(screen, walls, solidDecorations)
+    }
+
+    private drawProjectCourtyard() {
+      this.track(this.add.rectangle(240, 144, SCREEN_WIDTH, SCREEN_HEIGHT, 0x698b3d).setDepth(0))
+      const ground = this.track(this.add.graphics().setDepth(0.5))
+
+      // An open east-west lane connects the only exit to the forge. Short
+      // branches make the six project markers feel like workstations.
+      ground.fillStyle(0x776844)
+      ground.fillRect(16, 126, 448, 36)
+      for (const x of [92, 240, 388]) {
+        ground.fillRect(x - 13, 86, 26, 42)
+        ground.fillRect(x - 13, 160, 26, 34)
+      }
+      ground.fillStyle(0xc4a774)
+      ground.fillRect(16, 131, 448, 26)
+      for (const x of [92, 240, 388]) {
+        ground.fillRect(x - 9, 86, 18, 48)
+        ground.fillRect(x - 9, 154, 18, 40)
+      }
+
+      // Sparse cobbles break up the straight edges without becoming obstacles.
+      ground.fillStyle(0x967b52)
+      for (let x = 28; x < 456; x += 36) {
+        ground.fillRect(x, x % 72 === 28 ? 135 : 149, 7, 3)
+      }
+      for (const x of [92, 240, 388]) {
+        ground.fillRect(x - 3, 100, 6, 3)
+        ground.fillRect(x + 2, 174, 5, 3)
+      }
     }
 
     private handlePointerInput(pointer: Phaser.Input.Pointer) {
@@ -281,17 +344,34 @@ export async function createAdventureGame({
       this.track(this.add.rectangle(472, 144, 16, SCREEN_HEIGHT, 0x173d23).setDepth(1))
 
       for (let x = 8; x < SCREEN_WIDTH; x += 16) {
-        if (!screen.exits.up || x < 208 || x > 272) this.track(this.add.image(x, 8, 'grass').setDepth(2))
-        if (!screen.exits.down || x < 208 || x > 272) this.track(this.add.image(x, 280, 'grass').setDepth(2))
+        if (!screen.exits.up || x < 208 || x > 272) this.drawBorderBush(x, 8, screen.kind === 'training')
+        if (!screen.exits.down || x < 208 || x > 272) this.drawBorderBush(x, 280, screen.kind === 'training')
       }
       for (let y = 24; y < SCREEN_HEIGHT - 16; y += 16) {
-        if (!screen.exits.left || y < 112 || y > 176) this.track(this.add.image(8, y, 'grass').setDepth(2))
-        if (!screen.exits.right || y < 112 || y > 176) this.track(this.add.image(472, y, 'grass').setDepth(2))
+        if (!screen.exits.left || y < 112 || y > 176) this.drawBorderBush(8, y, screen.kind === 'training')
+        if (!screen.exits.right || y < 112 || y > 176) this.drawBorderBush(472, y, screen.kind === 'training')
       }
 
-      return getBoundaryObstacles(screen).map(([x, y, width, height]) =>
+      const obstacles = screen.kind === 'training'
+        ? [...getBoundaryObstacles(screen), ...TRAINING_HEDGE_CLUSTERS]
+        : getBoundaryObstacles(screen)
+      if (screen.kind === 'training') {
+        for (const [centerX, centerY, width, height] of TRAINING_HEDGE_CLUSTERS) {
+          for (let y = centerY - height / 2 + 8; y < centerY + height / 2; y += 16) {
+            for (let x = centerX - width / 2 + 8; x < centerX + width / 2; x += 16) {
+              this.drawBorderBush(x, y, true)
+            }
+          }
+        }
+      }
+      return obstacles.map(([x, y, width, height]) =>
         this.addStaticWall(x, y, width, height),
       )
+    }
+
+    private drawBorderBush(x: number, y: number, isTraining: boolean) {
+      const bush = this.track(this.add.image(x, y, 'grass').setDepth(2))
+      if (isTraining) bush.setTint(0x59c873)
     }
 
     private drawTrainingScreen() {
@@ -299,7 +379,7 @@ export async function createAdventureGame({
         return
       }
 
-      this.tutorialEnemy = this.track(this.add.sprite(240, 138, GUARDIAN_KEY, 0).setDepth(3))
+      this.tutorialEnemy = this.track(this.add.image(240, 138, 'crate').setDepth(3))
       this.makeSolid(this.tutorialEnemy)
     }
 
@@ -317,7 +397,7 @@ export async function createAdventureGame({
 
     private createContentObject(reference: ContentReference, index: number, x: number, y: number) {
       if (reference.kind === 'experience') {
-        const texture = index % 2 === 0 ? GUIDE_KEY : GUARDIAN_KEY
+        const texture = NPC_KEYS[index % NPC_KEYS.length]!
         return this.track(this.add.sprite(x, y, texture, index % 4).setDepth(3))
       }
       if (reference.kind === 'education') {
@@ -326,7 +406,7 @@ export async function createAdventureGame({
       if (reference.kind === 'project') {
         return this.track(this.add.image(x, y, index % 2 === 0 ? 'crate' : 'pot').setDepth(3))
       }
-      const texture = index % 2 === 0 ? GUIDE_KEY : GUARDIAN_KEY
+      const texture = NPC_KEYS[index % NPC_KEYS.length]!
       return this.track(this.add.sprite(x, y, texture, (index + 2) % 4).setDepth(3))
     }
 
@@ -335,24 +415,37 @@ export async function createAdventureGame({
     }
 
     private drawDecorations(screen: AdventureScreen) {
+      const solidDecorations: Phaser.GameObjects.Image[] = []
       for (const decoration of SCREEN_DECORATIONS[screen.kind]) {
-        this.track(
-          this.add.image(decoration.x, decoration.y, decoration.texture)
-            .setAlpha(decoration.alpha ?? 1)
-            .setFlipX('flipX' in decoration && decoration.flipX)
+        const definition = DECORATION_DEFINITIONS[decoration.texture]
+        const image = this.track(
+          this.add.image(
+            decoration.x,
+            decoration.y,
+            DECORATION_ATLAS_KEYS[definition.atlas],
+            decoration.texture,
+          )
+            .setAlpha('alpha' in decoration ? Number(decoration.alpha) : 1)
+            .setFlipX('flipX' in decoration ? Boolean(decoration.flipX) : false)
             .setDepth(1),
         )
+        if (decoration.collision === 'solid') {
+          this.makeDecorationSolid(image, decoration.texture)
+          solidDecorations.push(image)
+        }
       }
+      return solidDecorations
     }
 
     private drawRoamingMobs(
       screen: AdventureScreen,
       walls: Phaser.GameObjects.Rectangle[],
+      solidDecorations: Phaser.GameObjects.Image[],
     ) {
+      if (!bridge.getRuntimeState().monsterModeEnabled) return
       for (const spawn of SCREEN_MOBS[screen.kind]) {
         const sprite = this.track(
-          this.add.sprite(spawn.x, spawn.y, GUARDIAN_KEY, 0)
-            .setTint(0xd39b4a)
+          this.add.sprite(spawn.x, spawn.y, spawn.texture, 0)
             .setDepth(4),
         )
         this.physics.add.existing(sprite)
@@ -361,7 +454,14 @@ export async function createAdventureGame({
         body.setImmovable(true)
         body.setSize(10, 8, true)
         this.colliders.push(this.physics.add.collider(sprite, walls))
-        this.colliders.push(this.physics.add.collider(this.player, sprite))
+        if (solidDecorations.length > 0) {
+          this.colliders.push(this.physics.add.collider(sprite, solidDecorations))
+        }
+        this.colliders.push(this.physics.add.collider(
+          this.player,
+          sprite,
+          () => this.damagePlayer(),
+        ))
         this.mobs.push({ sprite, spawn, direction: 1 })
       }
     }
@@ -372,11 +472,12 @@ export async function createAdventureGame({
         const current = mob.spawn.axis === 'horizontal' ? mob.sprite.x : mob.sprite.y
         const origin = mob.spawn.axis === 'horizontal' ? mob.spawn.x : mob.spawn.y
         const body = mob.sprite.body as Phaser.Physics.Arcade.Body
-        const reachedPatrolEnd = Math.abs(current - origin) >= mob.spawn.range
-        const hitObstacle = mob.spawn.axis === 'horizontal'
-          ? body.blocked.left || body.blocked.right
-          : body.blocked.up || body.blocked.down
-        if (reachedPatrolEnd || hitObstacle) mob.direction *= -1
+        const blockedAhead = mob.spawn.axis === 'horizontal'
+          ? mob.direction === 1 ? body.blocked.right : body.blocked.left
+          : mob.direction === 1 ? body.blocked.down : body.blocked.up
+        mob.direction = nextPatrolDirection(
+          current, origin, mob.spawn.range, mob.direction, blockedAhead,
+        )
 
         if (mob.spawn.axis === 'horizontal') {
           body.setVelocity(mob.spawn.speed * mob.direction, 0)
@@ -389,13 +490,7 @@ export async function createAdventureGame({
     }
 
     private addWall(x: number, y: number, width: number, height: number) {
-      const wall = this.addStaticWall(x, y, width, height)
-      const count = Math.max(2, Math.floor(width / 16))
-      for (let index = 0; index < count; index += 1) {
-        const offset = count === 1 ? 0 : (index / (count - 1) - 0.5) * width
-        this.track(this.add.image(x + offset, y, 'grass').setDepth(2))
-      }
-      return wall
+      return this.addStaticWall(x, y, width, height)
     }
 
     private addStaticWall(x: number, y: number, width: number, height: number) {
@@ -410,6 +505,52 @@ export async function createAdventureGame({
       body.setSize(12, 8).setOffset(2, 7)
       body.updateFromGameObject()
       this.colliders.push(this.physics.add.collider(this.player, object))
+    }
+
+    private makeDecorationSolid(object: Phaser.GameObjects.Image, texture: DecorationTexture) {
+      const definition = DECORATION_DEFINITIONS[texture]
+      const [width, height, offsetX, offsetY] = 'body' in definition
+        ? definition.body
+        : [12, 8, 2, 7]
+      this.physics.add.existing(object, true)
+      const body = object.body as Phaser.Physics.Arcade.StaticBody
+      body.setSize(width, height).setOffset(offsetX, offsetY)
+      body.updateFromGameObject()
+      this.colliders.push(this.physics.add.collider(this.player, object))
+    }
+
+    private damagePlayer() {
+      if (this.transitioning || !bridge.getRuntimeState().monsterModeEnabled || this.time.now < this.damageAvailableAt) return
+      this.damageAvailableAt = this.time.now + 900
+      this.playerHealth = Math.max(0, this.playerHealth - 1)
+      bridge.emitEvent({ type: 'health-changed', health: this.playerHealth })
+      this.player.setTint(0xf06f5a)
+      this.time.delayedCall(160, () => this.player.clearTint())
+
+      if (this.playerHealth > 0) return
+      this.transitioning = true
+      const body = this.player.body as Phaser.Physics.Arcade.Body
+      body.setVelocity(0)
+      this.time.delayedCall(320, () => {
+        this.respawnAtStart()
+        this.playerHealth = 3
+        bridge.emitEvent({ type: 'health-changed', health: this.playerHealth })
+        this.transitioning = false
+      })
+    }
+
+    private respawnAtStart() {
+      this.currentScreenId = adventureWorld.startScreenId
+      this.drawCurrentScreen()
+      this.clearPointerTarget()
+      this.lastFacing = 'down'
+      this.player.stop()
+      this.player.setFrame(this.getIdleFrame())
+      this.player.setPosition(240, 220)
+      ;(this.player.body as Phaser.Physics.Arcade.Body).reset(240, 220)
+      bridge.setRuntimeState({ lastScreenId: this.currentScreenId })
+      bridge.emitEvent({ type: 'screen-changed', screenId: this.currentScreenId })
+      this.publishPlayerVisual()
     }
 
     private performAction() {
@@ -614,6 +755,11 @@ export async function createAdventureGame({
 
     private registerPackFrames() {
       this.textures.get(FLOOR_KEY).add('green-ground', 0, 176, 192, 16, 16)
+      for (const [texture, definition] of Object.entries(DECORATION_DEFINITIONS)) {
+        const [x, y, width, height] = definition.frame
+        this.textures.get(DECORATION_ATLAS_KEYS[definition.atlas])
+          .add(texture, 0, x, y, width, height)
+      }
     }
 
     private registerHeroAnimations() {
@@ -626,7 +772,7 @@ export async function createAdventureGame({
       for (const [direction, column] of Object.entries(directionColumns)) {
         this.anims.create({
           key: `hero-${direction}`,
-          frames: [0, 1, 2, 3].map((row) => ({ key: HERO_KEY, frame: row * 4 + column })),
+          frames: [0, 1, 2, 3].map((row) => ({ key: PLAYER_KEY, frame: row * 4 + column })),
           frameRate: 8,
           repeat: -1,
         })

@@ -1595,6 +1595,42 @@ a:focus-visible {
   font-weight: 700;
 }
 
+.monster-mode-toggle {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  background: rgba(4, 20, 11, 0.72);
+  color: var(--muted);
+  padding: 0 11px;
+  cursor: pointer;
+  font: 700 10px/1 'Space Mono', monospace;
+  text-transform: uppercase;
+}
+
+.monster-mode-toggle > span:first-child {
+  color: rgba(240, 203, 90, 0.58);
+  font-size: 9px;
+}
+
+.monster-mode-toggle strong {
+  color: var(--ink);
+}
+
+.monster-mode-toggle:hover,
+.monster-mode-toggle:focus-visible,
+.monster-mode-toggle.is-active {
+  border-color: var(--gold);
+  background: rgba(240, 203, 90, 0.12);
+  color: var(--ink);
+}
+
+.monster-mode-toggle.is-active > span:first-child {
+  color: #e36f55;
+  filter: drop-shadow(0 0 5px rgba(227, 111, 85, 0.6));
+}
+
 .adventure-contact-links a {
   width: 40px;
   height: 40px;
@@ -1944,6 +1980,33 @@ a:focus-visible {
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.36);
 }
 
+.monster-health {
+  position: absolute;
+  z-index: 6;
+  top: 10px;
+  left: 50%;
+  display: flex;
+  gap: 5px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(240, 203, 90, 0.32);
+  background: rgba(4, 20, 11, 0.82);
+  padding: 5px 8px;
+  pointer-events: none;
+}
+
+.monster-health span {
+  width: 14px;
+  height: 12px;
+  background: url('/assets/adventure/ninja-adventure/heart.png') center / contain no-repeat;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+.monster-health span.is-empty {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
+
 .information-button {
   display: inline-flex;
   min-height: 44px;
@@ -2045,7 +2108,7 @@ a:focus-visible {
   width: 3.333333%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
-  background: url('/assets/adventure/ninja-adventure/hero.png') 0 0 / 400% 700% no-repeat;
+  background: url('/assets/adventure/ninja-adventure/guide.png') 0 0 / 400% 700% no-repeat;
   image-rendering: crisp-edges;
   image-rendering: pixelated;
   pointer-events: none;
@@ -3146,6 +3209,15 @@ a:focus-visible {
     gap: 7px;
   }
 
+  .monster-mode-toggle {
+    min-height: 36px;
+    padding-inline: 8px;
+  }
+
+  .monster-mode-toggle > span:nth-child(2) {
+    display: none;
+  }
+
   .guide-steps,
   .guide-controls {
     grid-template-columns: 1fr;
@@ -3398,6 +3470,15 @@ a:focus-visible {
   .information-button {
     min-width: 36px;
     font-size: 0;
+  }
+
+  .monster-mode-toggle {
+    min-height: 36px;
+    padding-inline: 8px;
+  }
+
+  .monster-mode-toggle > span:nth-child(2) {
+    display: none;
   }
 
   .information-button span {
