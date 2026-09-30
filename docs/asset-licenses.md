@@ -23,6 +23,9 @@ Only the files needed by the current prototype are copied into the application:
 - `monster-slime.png`: `Actor/Monster/Slime/Slime.png`
 - `monster-bat.png`: `Actor/Monster/BlueBat/SpriteSheet.png`
 - `monster-mushroom.png`: `Actor/Monster/Mushroom/mushroom.png`
+- `monster-cyclope.png`: `Actor/Monster/Cyclope/SpriteSheet.png`
+- `monster-skull-blue.png`: `Actor/Monster/SkullBlue/SpriteSheet.png`
+- `monster-spider-red.png`: `Actor/Monster/SpiderRed/SpriteSheet.png`
 - `heart.png`: `Ui/Receptacle/IconHeart.png`
 - `tileset-nature.png`: `Backgrounds/Tilesets/TilesetNature.png`
 - `tileset-village-abandoned.png`: `Backgrounds/Tilesets/TilesetVillageAbandoned.png`

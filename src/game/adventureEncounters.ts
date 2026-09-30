@@ -40,7 +40,16 @@ export const DECORATION_DEFINITIONS = {
 } as const satisfies Record<string, DecorationDefinition>
 
 export type DecorationTexture = keyof typeof DECORATION_DEFINITIONS
-export type MonsterTexture = 'monster-slime' | 'monster-bat' | 'monster-mushroom'
+export const MONSTER_TEXTURES = [
+  'monster-slime',
+  'monster-bat',
+  'monster-mushroom',
+  'monster-cyclope',
+  'monster-skull-blue',
+  'monster-spider-red',
+] as const
+
+export type MonsterTexture = typeof MONSTER_TEXTURES[number]
 
 export type ScreenDecoration = {
   x: number
@@ -106,12 +115,29 @@ export const SCREEN_DECORATIONS = {
 } as const satisfies Record<AdventureScreen['kind'], readonly ScreenDecoration[]>
 
 export const SCREEN_MOBS = {
-  training: [{ x: 398, y: 198, axis: 'vertical', range: 24, speed: 18, texture: 'monster-slime' }],
-  experience: [{ x: 240, y: 148, axis: 'horizontal', range: 50, speed: 22, texture: 'monster-slime' }],
-  studies: [{ x: 240, y: 70, axis: 'horizontal', range: 40, speed: 20, texture: 'monster-bat' }],
+  training: [
+    { x: 398, y: 198, axis: 'vertical', range: 24, speed: 18, texture: 'monster-slime' },
+    { x: 320, y: 210, axis: 'horizontal', range: 30, speed: 21, texture: 'monster-cyclope' },
+  ],
+  experience: [
+    { x: 240, y: 148, axis: 'horizontal', range: 50, speed: 22, texture: 'monster-slime' },
+    { x: 140, y: 230, axis: 'horizontal', range: 26, speed: 19, texture: 'monster-spider-red' },
+    { x: 410, y: 140, axis: 'vertical', range: 24, speed: 24, texture: 'monster-skull-blue' },
+  ],
+  studies: [
+    { x: 240, y: 70, axis: 'horizontal', range: 40, speed: 20, texture: 'monster-bat' },
+    { x: 64, y: 140, axis: 'vertical', range: 28, speed: 18, texture: 'monster-mushroom' },
+    { x: 414, y: 76, axis: 'horizontal', range: 24, speed: 22, texture: 'monster-cyclope' },
+  ],
   projects: [
     { x: 240, y: 142, axis: 'vertical', range: 34, speed: 24, texture: 'monster-mushroom' },
     { x: 390, y: 238, axis: 'horizontal', range: 32, speed: 18, texture: 'monster-slime' },
+    { x: 42, y: 150, axis: 'vertical', range: 28, speed: 20, texture: 'monster-skull-blue' },
+    { x: 240, y: 248, axis: 'horizontal', range: 36, speed: 25, texture: 'monster-spider-red' },
   ],
-  personal: [{ x: 360, y: 144, axis: 'vertical', range: 30, speed: 20, texture: 'monster-bat' }],
+  personal: [
+    { x: 360, y: 144, axis: 'vertical', range: 30, speed: 20, texture: 'monster-bat' },
+    { x: 140, y: 142, axis: 'horizontal', range: 24, speed: 18, texture: 'monster-cyclope' },
+    { x: 320, y: 246, axis: 'horizontal', range: 24, speed: 23, texture: 'monster-skull-blue' },
+  ],
 } as const satisfies Record<AdventureScreen['kind'], readonly MobSpawn[]>

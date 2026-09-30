@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { adventureWorld } from '../content/adventure.data'
 import { ADVENTURE_VIEWPORT, getContentPositions, SCREEN_OBSTACLES } from './worldLayout'
-import { DECORATION_DEFINITIONS, SCREEN_DECORATIONS, SCREEN_MOBS } from './adventureEncounters'
+import { DECORATION_DEFINITIONS, MONSTER_TEXTURES, SCREEN_DECORATIONS, SCREEN_MOBS } from './adventureEncounters'
 
-const monsterTextures = new Set(['monster-slime', 'monster-bat', 'monster-mushroom'])
+const monsterTextures = new Set(MONSTER_TEXTURES)
 
 describe('adventure encounters', () => {
   it('keeps decorations and mob patrols inside the playable area', () => {
@@ -29,6 +29,20 @@ describe('adventure encounters', () => {
         expect(mob.speed).toBeLessThan(40)
         expect(monsterTextures.has(mob.texture)).toBe(true)
       }
+    }
+  })
+
+  it('builds a rising encounter curve with varied monsters', () => {
+    expect(SCREEN_MOBS.training).toHaveLength(2)
+    expect(SCREEN_MOBS.experience).toHaveLength(3)
+    expect(SCREEN_MOBS.studies).toHaveLength(3)
+    expect(SCREEN_MOBS.projects).toHaveLength(4)
+    expect(SCREEN_MOBS.personal).toHaveLength(3)
+
+    const usedTextures = new Set(Object.values(SCREEN_MOBS).flat().map(({ texture }) => texture))
+    expect(usedTextures).toEqual(new Set(MONSTER_TEXTURES))
+    for (const mobs of Object.values(SCREEN_MOBS)) {
+      expect(new Set(mobs.map(({ texture }) => texture)).size).toBe(mobs.length)
     }
   })
 

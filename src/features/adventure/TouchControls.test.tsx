@@ -1,11 +1,14 @@
 // @vitest-environment jsdom
 import '@testing-library/jest-dom/vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AdventureBridge } from '../../game/bridge/AdventureBridge'
+import { konamiDirectionEventName } from '../../shared/konamiInput'
 import { TouchControls } from './TouchControls'
 
 describe('TouchControls', () => {
+  afterEach(cleanup)
+
   beforeEach(() => {
     Object.defineProperty(HTMLElement.prototype, 'setPointerCapture', {
       configurable: true,
@@ -39,5 +42,25 @@ describe('TouchControls', () => {
     fireEvent.pointerUp(rightButton, { pointerId: 7, clientX: 50, clientY: 4 })
     expect(bridge.isDirectionHeld('up')).toBe(false)
     expect(upButton).not.toHaveClass('is-active')
+  })
+
+  it('emits each newly pressed pad direction for the secret sequence', () => {
+    const bridge = new AdventureBridge()
+    const receivedDirections: string[] = []
+    const handleDirection = (event: Event) => {
+      receivedDirections.push((event as CustomEvent<string>).detail)
+    }
+    window.addEventListener(konamiDirectionEventName, handleDirection)
+    render(<TouchControls bridge={bridge} locale="en" />)
+
+    const upButton = screen.getByRole('button', { name: 'Up' })
+    const dpad = upButton.parentElement!
+    vi.spyOn(dpad, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 100, 100))
+
+    fireEvent.pointerDown(upButton, { pointerId: 8, clientX: 50, clientY: 4 })
+    fireEvent.pointerUp(upButton, { pointerId: 8, clientX: 50, clientY: 4 })
+
+    expect(receivedDirections).toEqual(['up'])
+    window.removeEventListener(konamiDirectionEventName, handleDirection)
   })
 })

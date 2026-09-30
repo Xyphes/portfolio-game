@@ -31,7 +31,7 @@ Le récit détaillé des jalons reste dans [`docs/architecture.md`](architecture
 | Préférences audio | `src/domain/audioPreferences.ts`, `src/config/audio.ts` | `AudioControls.tsx`, dépôt de préférences et tests |
 | Installation, mise à jour et messages PWA | `src/features/pwa/PwaControls.tsx` | `src/domain/pwa.ts`, `vite.config.ts`, `scripts/verify-build.mjs` |
 | Routes, lazy loading ou écran de chargement | `src/app/App.tsx` | `src/main.tsx`, métadonnées de chaque page |
-| Raccourci secret Konami global | `src/app/KonamiRedirect.tsx` | logique pure dans `src/domain/konamiCode.ts`, test colocalisé |
+| Raccourci secret Konami global | `src/app/KonamiRedirect.tsx` | logique pure dans `src/domain/konamiCode.ts`, événements tactiles dans `src/shared/konamiInput.ts`, test colocalisé |
 | Sélecteur FR/EN | `src/shared/LanguageProvider.tsx`, `LanguageSwitch.tsx` | `language.ts`, routes dans `App.tsx` |
 | Fond animé | `src/shared/PixelBlastBackdrop.tsx` | styles associés dans `src/styles.css`, réduction des animations |
 | SEO et métadonnées | `src/shared/usePageMetadata.ts` | appel du hook dans chaque page et test associé |

@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react'
 import {
-  advanceArrowKonamiSequence,
-  arrowKonamiSequence,
+  advanceKonamiSequence,
+  konamiDirectionSequence,
   konamiRedirectUrl,
+  type KonamiDirection,
 } from '../domain/konamiCode'
+import { konamiDirectionEventName } from '../shared/konamiInput'
 
 type KonamiRedirectProps = {
   onComplete?: () => void
@@ -17,19 +19,29 @@ export function KonamiRedirect({ onComplete = redirectToSecretVideo }: KonamiRed
   const progressRef = useRef(0)
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.repeat) return
+    const registerInput = (input: string) => {
+      progressRef.current = advanceKonamiSequence(progressRef.current, input)
 
-      progressRef.current = advanceArrowKonamiSequence(progressRef.current, event.key)
-
-      if (progressRef.current === arrowKonamiSequence.length) {
+      if (progressRef.current === konamiDirectionSequence.length) {
         progressRef.current = 0
         onComplete()
       }
     }
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.repeat) return
+      registerInput(event.key)
+    }
+    const handlePadDirection = (event: Event) => {
+      registerInput((event as CustomEvent<KonamiDirection>).detail)
+    }
+
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    window.addEventListener(konamiDirectionEventName, handlePadDirection)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener(konamiDirectionEventName, handlePadDirection)
+    }
   }, [onComplete])
 
   return null

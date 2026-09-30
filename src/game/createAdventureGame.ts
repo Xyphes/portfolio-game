@@ -8,6 +8,7 @@ import { getKnockbackVelocity, type Point } from './combatFeedback'
 import { nextPatrolDirection, type PatrolDirection } from './mobPatrol'
 import {
   DECORATION_DEFINITIONS,
+  MONSTER_TEXTURES,
   SCREEN_DECORATIONS,
   SCREEN_MOBS,
   type DecorationAtlas,
@@ -35,7 +36,6 @@ const SCREEN_HEIGHT = ADVENTURE_VIEWPORT.height
 const ASSET_ROOT = '/assets/adventure/ninja-adventure'
 const PLAYER_KEY = 'guide'
 const NPC_KEYS = ['npc-villager', 'npc-villager-2', 'npc-old-woman'] as const
-const MONSTER_KEYS = ['monster-slime', 'monster-bat', 'monster-mushroom'] as const
 const FLOOR_KEY = 'forest-floor-tileset'
 const NATURE_KEY = 'nature-tileset'
 const VILLAGE_KEY = 'village-tileset'
@@ -103,7 +103,7 @@ export async function createAdventureGame({
       const characterSheet = { frameWidth: 16, frameHeight: 16 }
       this.load.spritesheet(PLAYER_KEY, `${ASSET_ROOT}/guide.png`, characterSheet)
       for (const key of NPC_KEYS) this.load.spritesheet(key, `${ASSET_ROOT}/${key}.png`, characterSheet)
-      for (const key of MONSTER_KEYS) this.load.spritesheet(key, `${ASSET_ROOT}/${key}.png`, characterSheet)
+      for (const key of MONSTER_TEXTURES) this.load.spritesheet(key, `${ASSET_ROOT}/${key}.png`, characterSheet)
       this.load.image(FLOOR_KEY, `${ASSET_ROOT}/tileset-floor.png`)
       this.load.image(NATURE_KEY, `${ASSET_ROOT}/tileset-nature.png`)
       this.load.image(VILLAGE_KEY, `${ASSET_ROOT}/tileset-village-abandoned.png`)

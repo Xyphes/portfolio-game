@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import type { AdventureBridge, Direction } from '../../game/bridge/AdventureBridge'
+import { dispatchKonamiDirection } from '../../shared/konamiInput'
 import { getVirtualJoystickDirections } from './virtualJoystick'
 
 type TouchControlsProps = {
@@ -29,6 +30,9 @@ export function TouchControls({ bridge, locale }: TouchControlsProps) {
     if (!changed) return
 
     for (const { direction } of directions) {
+      if (!previousDirections.has(direction) && nextDirectionSet.has(direction)) {
+        dispatchKonamiDirection(direction)
+      }
       bridge.setDirection(direction, nextDirectionSet.has(direction))
     }
     heldTouchDirectionsRef.current = nextDirectionSet
@@ -75,6 +79,7 @@ export function TouchControls({ bridge, locale }: TouchControlsProps) {
     event.preventDefault()
     event.stopPropagation()
     if (held && event.repeat) return
+    if (held) dispatchKonamiDirection(direction)
     bridge.setDirection(direction, held)
   }
 
