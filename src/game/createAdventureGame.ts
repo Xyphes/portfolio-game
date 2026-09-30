@@ -4,6 +4,7 @@ import type { Locale } from '../content/portfolio.schema'
 import { localize } from '../content/selectors'
 import { getPointerMovement } from '../domain/pointerNavigation'
 import type { AdventureBridge } from './bridge/AdventureBridge'
+import { getKnockbackVelocity, type Point } from './combatFeedback'
 import { nextPatrolDirection, type PatrolDirection } from './mobPatrol'
 import {
   DECORATION_DEFINITIONS,
@@ -47,6 +48,8 @@ const DECORATION_ATLAS_KEYS: Record<DecorationAtlas, string> = {
   camp: CAMP_KEY,
 }
 const PLAYER_SPEED = 96
+const DAMAGE_KNOCKBACK_SPEED = 170
+const DAMAGE_KNOCKBACK_DURATION = 190
 
 type PointerTarget = {
   x: number
@@ -89,6 +92,7 @@ export async function createAdventureGame({
     private transitioning = false
     private noticeAvailableAt = 0
     private damageAvailableAt = 0
+    private knockbackUntil = 0
     private playerHealth = 3
 
     constructor() {
@@ -158,6 +162,15 @@ export async function createAdventureGame({
         return
       }
 
+      this.updateMobs()
+      if (this.time.now < this.knockbackUntil) {
+        this.clearPointerTarget()
+        this.player.stop()
+        this.player.setFrame(this.getIdleFrame())
+        this.publishPlayerVisual()
+        return
+      }
+
       const left = this.cursors.left.isDown
         || this.movementKeys.a.isDown
         || this.movementKeys.q.isDown
@@ -215,7 +228,6 @@ export async function createAdventureGame({
         this.player.setFrame(this.getIdleFrame())
       }
       this.publishPlayerVisual()
-      this.updateMobs()
 
       const keyboardAction = this.actionKeys.some((key) =>
         Phaser.Input.Keyboard.JustDown(key),
@@ -460,7 +472,7 @@ export async function createAdventureGame({
         this.colliders.push(this.physics.add.collider(
           this.player,
           sprite,
-          () => this.damagePlayer(),
+          () => this.damagePlayer(sprite),
         ))
         this.mobs.push({ sprite, spawn, direction: 1 })
       }
@@ -519,13 +531,12 @@ export async function createAdventureGame({
       this.colliders.push(this.physics.add.collider(this.player, object))
     }
 
-    private damagePlayer() {
+    private damagePlayer(enemy: Phaser.GameObjects.Sprite) {
       if (this.transitioning || !bridge.getRuntimeState().monsterModeEnabled || this.time.now < this.damageAvailableAt) return
       this.damageAvailableAt = this.time.now + 900
       this.playerHealth = Math.max(0, this.playerHealth - 1)
       bridge.emitEvent({ type: 'health-changed', health: this.playerHealth })
-      this.player.setTint(0xf06f5a)
-      this.time.delayedCall(160, () => this.player.clearTint())
+      this.applyDamageFeedback(enemy)
 
       if (this.playerHealth > 0) return
       this.transitioning = true
@@ -539,11 +550,34 @@ export async function createAdventureGame({
       })
     }
 
+    private applyDamageFeedback(enemy: Phaser.GameObjects.Sprite) {
+      const fallbackByFacing: Record<AdventureDirection, Point> = {
+        down: { x: 0, y: -1 },
+        up: { x: 0, y: 1 },
+        left: { x: 1, y: 0 },
+        right: { x: -1, y: 0 },
+      }
+      const velocity = getKnockbackVelocity(
+        this.player,
+        enemy,
+        DAMAGE_KNOCKBACK_SPEED,
+        fallbackByFacing[this.lastFacing],
+      )
+      this.clearPointerTarget()
+      this.knockbackUntil = this.time.now + DAMAGE_KNOCKBACK_DURATION
+      ;(this.player.body as Phaser.Physics.Arcade.Body).setVelocity(velocity.x, velocity.y)
+      this.player.stop()
+      this.player.setTint(0xf06f5a)
+      this.time.delayedCall(DAMAGE_KNOCKBACK_DURATION, () => this.player.clearTint())
+      if (!reducedMotion) this.cameras.main.shake(110, 0.004)
+    }
+
     private respawnAtStart() {
       this.currentScreenId = adventureWorld.startScreenId
       this.drawCurrentScreen()
       this.clearPointerTarget()
       this.lastFacing = 'down'
+      this.knockbackUntil = 0
       this.player.stop()
       this.player.setFrame(this.getIdleFrame())
       this.player.setPosition(240, 220)

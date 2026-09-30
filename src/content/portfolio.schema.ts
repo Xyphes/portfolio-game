@@ -49,6 +49,7 @@ const projectSchema = z.object({
   title: localizedTextSchema,
   context: localizedTextSchema,
   summary: localizedTextSchema,
+  details: z.array(localizedTextSchema).optional(),
   skillIds: z.array(z.string().trim().min(1)).min(1),
   publicationApproved: z.literal(true),
 })
@@ -56,6 +57,7 @@ const projectSchema = z.object({
 const interestSchema = z.object({
   id: z.string().trim().min(1),
   label: localizedTextSchema,
+  description: localizedTextSchema,
   mediaFolder: z.string().regex(/^[a-z0-9-]+$/),
   publicationApproved: z.literal(true),
 })
@@ -67,6 +69,12 @@ export const portfolioSchema = z
       title: localizedTextSchema,
       introduction: localizedTextSchema,
       availability: localizedTextSchema,
+      highlights: z.array(localizedTextSchema).min(1),
+      recommendation: z.object({
+        summary: localizedTextSchema,
+        author: z.string().trim().min(1),
+        role: localizedTextSchema,
+      }),
       portrait: z.object({
         src: z.string().startsWith('/'),
         alt: localizedTextSchema,

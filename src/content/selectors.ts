@@ -81,7 +81,7 @@ export function getContentDetail(reference: ContentReference, locale: Locale): C
       title: localize(project.title, locale),
       kicker: localize(project.context, locale),
       summary: localize(project.summary, locale),
-      bullets: [],
+      bullets: project.details?.map((detail) => localize(detail, locale)) ?? [],
       skillIds: project.skillIds,
     }
   }
@@ -91,6 +91,7 @@ export function getContentDetail(reference: ContentReference, locale: Locale): C
     reference,
     title: localize(interest.label, locale),
     kicker: locale === 'fr' ? 'Centre d’intérêt' : 'Interest',
+    summary: localize(interest.description, locale),
     bullets: [],
     skillIds: [],
   }

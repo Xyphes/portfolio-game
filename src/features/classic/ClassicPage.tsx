@@ -56,8 +56,7 @@ const copy = {
     contact: 'Contact',
     reader: 'Contenu du portfolio',
     sectionNavigation: 'Navigation des sections',
-    milestone: 'Une source, deux parcours',
-    milestoneText: 'Ces expériences, études et projets sont les mêmes entités que celles découvertes dans le jeu.',
+    milestone: 'Recommandation professionnelle',
     metaTitle: 'Willy Somkhit — Ingénieur logiciel | Portfolio',
   },
   en: {
@@ -92,8 +91,7 @@ const copy = {
     contact: 'Contact',
     reader: 'Portfolio content',
     sectionNavigation: 'Section navigation',
-    milestone: 'One source, two journeys',
-    milestoneText: 'These experiences, studies, and projects are the same entities discovered in the game.',
+    milestone: 'Professional recommendation',
     metaTitle: 'Willy Somkhit — Software Engineer | Portfolio',
   },
 } as const
@@ -353,6 +351,11 @@ export function ClassicPage() {
                     />
                   </figure>
                   <p>{localize(portfolio.profile.introduction, routeLocale)}</p>
+                  <ul className="profile-highlights">
+                    {portfolio.profile.highlights.map((highlight) => (
+                      <li key={highlight.fr}>{localize(highlight, routeLocale)}</li>
+                    ))}
+                  </ul>
                   <span className="availability">
                     <i aria-hidden="true" />
                     {localize(portfolio.profile.availability, routeLocale)}
@@ -364,7 +367,10 @@ export function ClassicPage() {
                 <span className="fragment-glyph" aria-hidden="true">◆</span>
                 <div>
                   <strong>{text.milestone}</strong>
-                  <p>{text.milestoneText}</p>
+                  <p>{localize(portfolio.profile.recommendation.summary, routeLocale)}</p>
+                  <small>
+                    {portfolio.profile.recommendation.author} · {localize(portfolio.profile.recommendation.role, routeLocale)}
+                  </small>
                 </div>
               </section>
             </>
@@ -474,6 +480,13 @@ export function ClassicPage() {
                     <p className="card-kicker">{localize(project.context, routeLocale)}</p>
                     <h2>{localize(project.title, routeLocale)}</h2>
                     <p>{localize(project.summary, routeLocale)}</p>
+                    {project.details && (
+                      <ul>
+                        {project.details.map((detail) => (
+                          <li key={detail.fr}>{localize(detail, routeLocale)}</li>
+                        ))}
+                      </ul>
+                    )}
                     <div className="skill-list">
                       {project.skillIds.map((skillId) => (
                         <span key={skillId}>{getSkillLabel(skillId, routeLocale)}</span>
@@ -524,6 +537,9 @@ export function ClassicPage() {
                       </span>
                     )}
                   </header>
+                  <p className="interest-description">
+                    {localize(activeInterest.description, routeLocale)}
+                  </p>
                   {activeInterestMedia.length > 0
                     ? (
                         <div
