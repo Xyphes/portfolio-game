@@ -31,6 +31,7 @@ Le récit détaillé des jalons reste dans [`docs/architecture.md`](architecture
 | Préférences audio | `src/domain/audioPreferences.ts`, `src/config/audio.ts` | `AudioControls.tsx`, dépôt de préférences et tests |
 | Installation, mise à jour et messages PWA | `src/features/pwa/PwaControls.tsx` | `src/domain/pwa.ts`, `vite.config.ts`, `scripts/verify-build.mjs` |
 | Routes, lazy loading ou écran de chargement | `src/app/App.tsx` | `src/main.tsx`, métadonnées de chaque page |
+| Raccourci secret Konami global | `src/app/KonamiRedirect.tsx` | logique pure dans `src/domain/konamiCode.ts`, test colocalisé |
 | Sélecteur FR/EN | `src/shared/LanguageProvider.tsx`, `LanguageSwitch.tsx` | `language.ts`, routes dans `App.tsx` |
 | Fond animé | `src/shared/PixelBlastBackdrop.tsx` | styles associés dans `src/styles.css`, réduction des animations |
 | SEO et métadonnées | `src/shared/usePageMetadata.ts` | appel du hook dans chaque page et test associé |
@@ -65,6 +66,7 @@ Règles essentielles :
 
 - `src/main.tsx` monte React, le routeur et le fournisseur de langue.
 - `src/app/App.tsx` déclare `/`, `/:locale/classic` et `/:locale/adventure`.
+- `src/app/KonamiRedirect.tsx` écoute globalement la séquence secrète de flèches et déclenche sa redirection.
 - `src/features/landing/LandingPage.tsx` est l'accueil et le choix du mode.
 - `src/features/classic/ClassicPage.tsx` affiche les sections pilotées par le hash : `about`, `skills`, `education`, `experiences`, `projects`, `interests`, `documents`, `contact`.
 - `src/features/adventure/AdventurePage.tsx` orchestre l'aventure ; `PhaserHost.tsx` monte et détruit le jeu.

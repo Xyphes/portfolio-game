@@ -4,6 +4,7 @@ import { backgroundMusicPath } from '../config/audio'
 import { LandingPage } from '../features/landing/LandingPage'
 import { PwaControls } from '../features/pwa/PwaControls'
 import { normalizeLocale } from '../shared/language'
+import { KonamiRedirect } from './KonamiRedirect'
 
 const ClassicPage = lazy(() =>
   import('../features/classic/ClassicPage').then((module) => ({
@@ -26,6 +27,7 @@ const AudioControls = backgroundMusicPath
 export function App() {
   return (
     <>
+      <KonamiRedirect />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route
