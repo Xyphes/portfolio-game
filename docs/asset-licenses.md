@@ -17,6 +17,7 @@ Only the files needed by the current prototype are copied into the application:
 - `tileset-floor.png`: `content/map/tileset_floor.png`
 - `grass.png`, `crate.png`, `pot.png`: matching files from `content/destroyable/`
 - `book.png`: `content/weapon/book/sprite.png`
+- `lance.png`: `Items/Weapons/Lance/Sprite.png`
 - `npc-villager.png`: `Actor/Character/Villager/SpriteSheet.png`
 - `npc-villager-2.png`: `Actor/Character/Villager2/SpriteSheet.png`
 - `npc-old-woman.png`: `Actor/Character/OldWoman/SpriteSheet.png`

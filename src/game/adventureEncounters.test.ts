@@ -65,6 +65,8 @@ describe('adventure encounters', () => {
       texture: 'nature-rocks',
       collision: 'solid',
     })
+    expect(SCREEN_DECORATIONS.studies.map(({ texture }) => String(texture)))
+      .not.toContain('workshop-library')
     expect(DECORATION_DEFINITIONS['camp-tent'].frame).toEqual([64, 0, 48, 48])
     expect(SCREEN_DECORATIONS.personal[0]).toMatchObject({
       texture: 'camp-tent',

@@ -90,7 +90,6 @@ export const SCREEN_DECORATIONS = {
     { x: 360, y: 190, texture: 'ruin-entrance', collision: 'layout' },
     { x: 424, y: 226, texture: 'ruin-archive', collision: 'solid' },
     { x: 48, y: 226, texture: 'nature-dead-tree', collision: 'solid' },
-    { x: 240, y: 232, texture: 'workshop-library', collision: 'solid' },
     { x: 86, y: 68, texture: 'nature-flower-white', collision: 'none' },
     { x: 300, y: 66, texture: 'nature-gray-rock', collision: 'solid' },
   ],

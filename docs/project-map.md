@@ -99,6 +99,7 @@ Les styles du projet sont centralisés dans `src/styles.css`. Chercher d'abord l
 - `PhaserHost.tsx` : cycle de vie du jeu et chargement différé.
 - `createAdventureGame.ts` : scène Phaser, joueur, sprites, clavier, collisions, respawn et interactions.
 - `combatFeedback.ts` : direction et intensité du recul du héros après une collision avec un monstre.
+- `spearAttack.ts` : géométrie directionnelle de l’estocade et détection de la zone de frappe.
 - `mobPatrol.ts` : inversion de direction des monstres aux limites de leur patrouille ou devant un obstacle.
 - `adventureEncounters.ts` : configuration déclarative des décorations et des mobs de chaque type de salle.
 - `AdventureBridge.ts` : événements et commandes typés entre React et Phaser.

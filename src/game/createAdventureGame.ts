@@ -6,6 +6,7 @@ import { getPointerMovement } from '../domain/pointerNavigation'
 import type { AdventureBridge } from './bridge/AdventureBridge'
 import { getKnockbackVelocity, type Point } from './combatFeedback'
 import { nextPatrolDirection, type PatrolDirection } from './mobPatrol'
+import { getSpearAttackGeometry, rectanglesOverlap, type Rectangle } from './spearAttack'
 import {
   DECORATION_DEFINITIONS,
   MONSTER_TEXTURES,
@@ -41,6 +42,7 @@ const NATURE_KEY = 'nature-tileset'
 const VILLAGE_KEY = 'village-tileset'
 const ELEMENTS_KEY = 'elements-tileset'
 const CAMP_KEY = 'camp-tileset'
+const SPEAR_KEY = 'lance'
 const DECORATION_ATLAS_KEYS: Record<DecorationAtlas, string> = {
   nature: NATURE_KEY,
   village: VILLAGE_KEY,
@@ -113,6 +115,7 @@ export async function createAdventureGame({
       this.load.image('crate', `${ASSET_ROOT}/crate.png`)
       this.load.image('pot', `${ASSET_ROOT}/pot.png`)
       this.load.image('memory-book', `${ASSET_ROOT}/book.png`)
+      this.load.image(SPEAR_KEY, `${ASSET_ROOT}/lance.png`)
     }
 
     create() {
@@ -589,17 +592,19 @@ export async function createAdventureGame({
 
     private performAction() {
       const screen = getAdventureScreen(this.currentScreenId)
-      if (this.tutorialEnemy && this.distanceTo(this.tutorialEnemy) < 36) {
-        this.drawAttackEffect()
+      const attack = getSpearAttackGeometry(this.player, this.lastFacing)
+      if (this.tutorialEnemy && this.attackOverlaps(this.tutorialEnemy, attack.hitbox)) {
+        this.drawSpearAttack(attack)
         this.completeTutorial()
         return
       }
 
       const nearestMob = this.mobs
+        .filter((mob) => this.attackOverlaps(mob.sprite, attack.hitbox))
         .map((mob) => ({ mob, distance: this.distanceTo(mob.sprite) }))
         .sort((left, right) => left.distance - right.distance)[0]
-      if (nearestMob && nearestMob.distance < 40) {
-        this.drawAttackEffect()
+      if (nearestMob) {
+        this.drawSpearAttack(attack)
         this.defeatMob(nearestMob.mob)
         return
       }
@@ -618,7 +623,7 @@ export async function createAdventureGame({
       }
 
       if (this.time.now >= this.noticeAvailableAt) {
-        this.drawAttackEffect()
+        this.drawSpearAttack(attack)
         bridge.emitEvent({
           type: 'notice',
           message: localize(adventureWorld.canvasCopy.nothingNearby, locale),
@@ -667,28 +672,38 @@ export async function createAdventureGame({
       })
     }
 
-    private drawAttackEffect() {
-      const offsets: Record<AdventureDirection, readonly [number, number, number]> = {
-        up: [0, -14, 0],
-        down: [0, 14, 0],
-        left: [-14, 0, 90],
-        right: [14, 0, 90],
-      }
-      const [offsetX, offsetY, angle] = offsets[this.lastFacing]
-      const effect = this.add
-        .rectangle(this.player.x + offsetX, this.player.y + offsetY, 16, 5, 0xf0cb5a, 0.78)
-        .setAngle(angle)
+    private attackOverlaps(
+      target: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite,
+      attackHitbox: Rectangle,
+    ) {
+      const body = target.body as Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody
+      return body.enable && rectanglesOverlap(attackHitbox, {
+        x: body.x,
+        y: body.y,
+        width: body.width,
+        height: body.height,
+      })
+    }
+
+    private drawSpearAttack(attack: ReturnType<typeof getSpearAttackGeometry>) {
+      const spear = this.add
+        .image(attack.start.x, attack.start.y, SPEAR_KEY)
+        .setAngle(attack.angle)
         .setDepth(7)
       if (reducedMotion) {
-        this.time.delayedCall(70, () => effect.destroy())
+        spear.setPosition(attack.end.x, attack.end.y)
+        this.time.delayedCall(110, () => spear.destroy())
         return
       }
       this.tweens.add({
-        targets: effect,
-        alpha: 0,
-        scaleX: 1.45,
-        duration: 110,
-        onComplete: () => effect.destroy(),
+        targets: spear,
+        x: attack.end.x,
+        y: attack.end.y,
+        duration: 75,
+        yoyo: true,
+        hold: 35,
+        ease: 'Quad.Out',
+        onComplete: () => spear.destroy(),
       })
     }
 
