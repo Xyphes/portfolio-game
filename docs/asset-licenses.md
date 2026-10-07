@@ -3,7 +3,7 @@
 | Asset | Author | Source | License | Modifications |
 | --- | --- | --- | --- | --- |
 | PWA monogram `public/icon.svg` | Project-owned | Created for this project | Project-owned | None |
-| Current CV PDF and preview images in `public/documents/` | Willy Somkhit | User-provided CV (17 September 2026) | User-provided | PDF copied unchanged; French and English page previews rendered from that PDF |
+| Current CV PDF and preview images in `public/documents/` | Willy Somkhit | User-provided CV (7 October 2026) | User-provided | PDF copied unchanged; French and English page previews rendered from that PDF |
 | Recommendation PDF | Julien Mullet / user-provided | User-provided | User-provided | Copied unchanged to public documents |
 | Profile portrait `public/assets/profile/willy-somkhit-portrait.jpg` | User-provided; photographer not specified | User-provided | Publication authorized by Willy Somkhit | Copied unchanged; displayed with CSS crop and color treatment |
 | Personal-interest photos and videos in `src/assets/interests/` | User-provided; photographers/videographers not specified | User-provided | Publication authorized by Willy Somkhit | Original files preserved; optimized photo copies generated at a maximum dimension of 1600 px in `src/assets/interests-optimized/`; videos served on demand without precaching |

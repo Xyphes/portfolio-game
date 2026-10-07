@@ -2,7 +2,7 @@
 
 ## Authoritative inputs
 
-- `CV-Somkhit-Willy-2026-FR-ENG.pdf`: professional profile, skills, studies, projects, languages, interests, and experiences.
+- `public/documents/CV-Somkhit-Willy-2026-FR-ENG.pdf` (source supplied as `CV_Willy_Somkhit_FR_EN.pdf` on 7 October 2026): professional profile, skills, studies, projects, languages, interests, and experiences.
 - `public/documents/Lettre-recommandation-Julien-Mullet-FR-EN.pdf`: recommendation and corroborated professional qualities.
 - User confirmation in the planning conversation: Sleepless is a real professional entry.
 - Previous portfolio at `C:\Users\$C20100-64QOS4V6EI5N\WebstormProjects\portfolio`: layout reference, existing public links, portrait, logos, and the Sleepless summary.

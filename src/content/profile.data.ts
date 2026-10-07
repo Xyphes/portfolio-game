@@ -11,8 +11,8 @@ export const portfolioProfile = {
     en: 'Final-year Software Engineering student at EPITA, following a three-year apprenticeship at Thales and a cybersecurity internship with Ekino in Vietnam. My background combines full-stack development, mapping, automated testing, and web security; I am now specializing in offensive security.',
   },
   availability: {
-    fr: "À la recherche d'un CDI à partir de septembre 2026.",
-    en: 'Seeking a full-time position from September 2026.',
+    fr: "Actuellement à la recherche d'un CDI.",
+    en: 'Currently seeking a full-time role.',
   },
   highlights: [
     {
