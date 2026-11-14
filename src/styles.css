@@ -3696,3 +3696,774 @@ a:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
+/*
+ * Visual refinement method: unslop by Damir Sokolovsky
+ * https://github.com/heydamir/unslop — CC BY 4.0
+ */
+
+/* Shared visual system: quiet quest-book chrome, content carries the color. */
+:root {
+  --ink: #eef1e8;
+  --muted: #a8b1a5;
+  --night: #07100c;
+  --panel: #101914;
+  --panel-soft: #18231d;
+  --surface-raised: #1e2b23;
+  --line: rgba(238, 241, 232, 0.1);
+  --line-strong: rgba(238, 241, 232, 0.18);
+  --leaf: #78d48a;
+  --gold: #e9c65e;
+  --moss: #94ae69;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body {
+  background: var(--night);
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline-width: 2px;
+  outline-offset: 3px;
+}
+
+.eyebrow,
+.mode-kicker,
+.section-index,
+.card-kicker {
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.primary-link,
+.ghost-button {
+  border-color: transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  transition:
+    background-color 160ms var(--ease-out),
+    border-color 160ms var(--ease-out),
+    color 160ms var(--ease-out),
+    transform 160ms var(--ease-out);
+}
+
+.primary-link:hover,
+.ghost-button:hover {
+  filter: none;
+  transform: translateY(-1px);
+}
+
+.primary-link:active,
+.ghost-button:active {
+  transform: scale(0.98);
+}
+
+.language-switch {
+  border-color: var(--line);
+  background: rgba(7, 16, 12, 0.88);
+}
+
+.language-switch button {
+  font-weight: 500;
+}
+
+.monogram {
+  border-color: rgba(233, 198, 94, 0.42);
+  border-radius: 8px;
+  background: var(--panel-soft);
+  box-shadow: none;
+}
+
+.pixel-blast-glow {
+  display: none;
+}
+
+.pixel-blast-particle {
+  box-shadow: none;
+}
+
+.pixel-blast-particle:nth-of-type(4n + 2),
+.pixel-blast-particle:nth-of-type(7n + 3) {
+  box-shadow: none;
+}
+
+.pixel-blast-particle.is-triangle,
+.pixel-blast-particle.is-triangle:nth-of-type(7n + 3) {
+  background: var(--gold);
+  filter: none;
+}
+
+/* Landing: one portrait moment, two compact and clearly different paths. */
+.landing-shell {
+  gap: clamp(12px, 2vh, 24px);
+  padding: clamp(20px, 4vh, 40px) clamp(20px, 5vw, 72px);
+}
+
+.ambient-grid {
+  background-image:
+    linear-gradient(rgba(238, 241, 232, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(238, 241, 232, 0.028) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+
+.landing-header {
+  top: clamp(20px, 4vh, 40px);
+  right: clamp(20px, 5vw, 72px);
+  left: clamp(20px, 5vw, 72px);
+}
+
+.hero {
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.hero h1 {
+  font-size: clamp(3rem, min(7vw, 13vh), 7rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.94;
+}
+
+.hero-title {
+  font-weight: 500;
+}
+
+.hero-lead {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.landing-portrait::before,
+.profile-portrait::before {
+  border-color: rgba(233, 198, 94, 0.52);
+  background: transparent;
+}
+
+.landing-portrait img,
+.profile-portrait img {
+  border-color: var(--line-strong);
+  filter: saturate(0.92) contrast(1.02);
+}
+
+.mode-grid {
+  gap: 16px;
+}
+
+.mode-card {
+  border-color: var(--line);
+  border-radius: 12px;
+  background: rgba(16, 25, 20, 0.94);
+  padding: clamp(20px, 2.5vh, 28px);
+  backdrop-filter: none;
+}
+
+.adventure-card {
+  background: rgba(21, 35, 26, 0.96);
+}
+
+.mode-card::after {
+  right: 24px;
+  bottom: 24px;
+  width: 88px;
+  height: 44px;
+  border: 0;
+  border-right: 1px solid rgba(233, 198, 94, 0.22);
+  border-bottom: 1px solid rgba(233, 198, 94, 0.22);
+  border-radius: 0 0 44px;
+}
+
+.mode-card h2 {
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.mode-card p:not(.mode-kicker) {
+  max-width: 38rem;
+}
+
+.mode-number {
+  color: rgba(238, 241, 232, 0.34);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.pixel-window {
+  opacity: 0.68;
+}
+
+.landing-footer {
+  min-height: 40px;
+}
+
+.contact-icon-links a {
+  width: 40px;
+  height: 40px;
+  border-color: var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--muted);
+  transition:
+    background-color 160ms var(--ease-out),
+    border-color 160ms var(--ease-out),
+    color 160ms var(--ease-out),
+    transform 160ms var(--ease-out);
+}
+
+.contact-icon-links a:hover,
+.contact-icon-links a:focus-visible {
+  border-color: rgba(120, 212, 138, 0.42);
+  background: var(--surface-raised);
+  color: var(--leaf);
+  transform: translateY(-1px);
+}
+
+/* Classic: denser navigation, wider reading surface, calmer cards. */
+.classic-shell {
+  grid-template-columns: 264px minmax(0, 1fr);
+  background: var(--night);
+}
+
+.classic-sidebar {
+  border-right-color: var(--line);
+  background: rgba(7, 16, 12, 0.98);
+  padding: 24px 20px;
+}
+
+.brand-lockup {
+  gap: 12px;
+}
+
+.brand-lockup strong {
+  font-weight: 600;
+}
+
+.classic-nav {
+  gap: 4px;
+  margin-top: 40px;
+}
+
+.classic-nav button {
+  min-height: 40px;
+  gap: 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition:
+    background-color 160ms var(--ease-out),
+    border-color 160ms var(--ease-out),
+    color 160ms var(--ease-out);
+}
+
+.classic-nav button:hover,
+.classic-nav button:focus-visible,
+.classic-nav button.is-active {
+  border-color: var(--line);
+  background: var(--panel-soft);
+}
+
+.classic-nav button:active {
+  transform: scale(0.98);
+}
+
+.classic-nav button:hover .classic-icon,
+.classic-nav button:focus-visible .classic-icon,
+.classic-nav button.is-active .classic-icon {
+  transform: none;
+}
+
+.classic-content {
+  background: var(--panel);
+  background-size: auto;
+}
+
+.classic-topbar {
+  min-height: 72px;
+  border-bottom-color: var(--line);
+  padding: 16px clamp(24px, 5vw, 64px);
+}
+
+.classic-scroll {
+  width: min(1120px, 100%);
+  padding: clamp(40px, 5vw, 64px) clamp(24px, 5vw, 64px) 64px;
+}
+
+.classic-scroll::before {
+  display: none;
+}
+
+.classic-scroll > *,
+.classic-scroll > *:nth-child(2) {
+  animation: classic-category-enter 360ms var(--ease-out) both;
+  animation-delay: 0ms;
+}
+
+@keyframes classic-category-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-intro-copy {
+  grid-template-columns: minmax(0, 1fr) clamp(180px, 22vw, 240px);
+  column-gap: clamp(32px, 5vw, 64px);
+}
+
+.profile-intro h1 {
+  margin: 12px 0 16px;
+  font-size: clamp(2.4rem, 4.4vw, 4.2rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.profile-intro-copy > p:not(.section-index) {
+  color: var(--ink);
+  line-height: 1.65;
+}
+
+.profile-highlights {
+  gap: 8px;
+  color: var(--muted);
+}
+
+.availability {
+  font-weight: 500;
+}
+
+.availability i {
+  box-shadow: none;
+}
+
+.classic-section,
+.experience-panel {
+  margin-top: 0;
+}
+
+.classic-section,
+.link-section {
+  position: relative;
+}
+
+.classic-section::after,
+.link-section::after {
+  position: absolute;
+  top: 26px;
+  right: 0;
+  width: min(180px, 24vw);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(233, 198, 94, 0.38));
+  content: '';
+  pointer-events: none;
+}
+
+.skill-groups {
+  gap: 24px 32px;
+  margin-top: 24px;
+}
+
+.skill-groups h2,
+.detail-grid h3 {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.content-card,
+.experience-panel,
+.interest-showcase,
+.document-grid a,
+.contact-list a {
+  border-color: var(--line);
+  border-radius: 10px;
+  background: rgba(7, 16, 12, 0.48);
+}
+
+.content-card {
+  padding: 24px;
+}
+
+.content-card h2,
+.experience-heading h2 {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.content-card > p:not(.card-kicker),
+.content-card li,
+.detail-grid li,
+.experience-summary {
+  color: var(--muted);
+}
+
+.education-grid,
+.project-grid,
+.experience-list {
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.experience-panel {
+  padding: clamp(24px, 4vw, 40px);
+}
+
+.experience-heading h2 {
+  font-size: 2rem;
+}
+
+.experience-summary {
+  margin: 24px 0;
+}
+
+.period,
+.skill-list span {
+  border-color: var(--line);
+  border-radius: 6px;
+  background: var(--panel-soft);
+  color: var(--muted);
+}
+
+.proof-callout {
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--leaf);
+  border-radius: 10px;
+  margin-bottom: 48px;
+  background: var(--panel-soft);
+}
+
+.interest-picker button {
+  border-color: transparent;
+  border-radius: 8px;
+  background: transparent;
+  font-weight: 500;
+}
+
+.interest-picker button:hover,
+.interest-picker button:focus-visible,
+.interest-picker button.is-active {
+  border-color: var(--line);
+  background: var(--surface-raised);
+}
+
+.interest-showcase {
+  border-color: var(--line);
+  padding: clamp(16px, 2vw, 24px);
+}
+
+.interest-carousel-stage {
+  border-color: var(--line);
+  border-radius: 8px;
+  background: var(--night);
+}
+
+.interest-carousel-arrow {
+  border-color: var(--line-strong);
+  border-radius: 8px;
+  background: rgba(7, 16, 12, 0.92);
+}
+
+.cv-preview img {
+  border-color: var(--line-strong);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* Adventure: the game remains the vivid moment; surrounding controls recede. */
+.adventure-shell {
+  background: var(--night);
+  padding: 12px clamp(12px, 2vw, 32px) 16px;
+}
+
+.adventure-header {
+  min-height: 48px;
+  margin-bottom: 12px;
+}
+
+.adventure-header-primary,
+.adventure-brand,
+.adventure-actions {
+  gap: 8px;
+}
+
+.classic-exit,
+.information-button,
+.monster-mode-toggle,
+.info-close,
+.journal-button {
+  min-height: 40px;
+  border-color: var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  font-weight: 500;
+  text-transform: none;
+}
+
+.classic-exit:hover,
+.classic-exit:focus-visible,
+.information-button:hover,
+.information-button:focus-visible,
+.monster-mode-toggle:hover,
+.monster-mode-toggle:focus-visible,
+.monster-mode-toggle.is-active,
+.journal-button:hover,
+.journal-button:focus-visible {
+  border-color: var(--line-strong);
+  background: var(--surface-raised);
+}
+
+.monster-mode-toggle.is-active > span:first-child {
+  color: #e36f55;
+  filter: none;
+}
+
+.adventure-contact-links a {
+  width: 40px;
+  height: 40px;
+}
+
+.quest-panel {
+  border-color: var(--line);
+  border-radius: 0 12px 12px 0;
+  background: rgba(16, 25, 20, 0.99);
+  box-shadow: 20px 0 56px rgba(0, 0, 0, 0.34);
+}
+
+.info-scrim {
+  background: rgba(2, 8, 5, 0.72);
+}
+
+.route-guide,
+.tutorial-status,
+.discovery-status,
+.professional-progress,
+.fragment-status,
+.completion-status {
+  border-color: var(--line);
+  border-radius: 8px;
+  background: var(--panel-soft);
+  text-transform: none;
+}
+
+.route-guide span,
+.route-guide small {
+  text-transform: none;
+}
+
+.game-frame {
+  border-color: rgba(233, 198, 94, 0.28);
+  border-radius: 8px;
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.24);
+}
+
+.game-runtime,
+.phaser-host {
+  border-radius: 4px;
+}
+
+.game-map-overlay,
+.monster-health {
+  border-color: var(--line-strong);
+  border-radius: 6px;
+  background: rgba(7, 16, 12, 0.86);
+  backdrop-filter: none;
+}
+
+.world-map i.is-recommended,
+.world-map i.is-current {
+  box-shadow: none;
+}
+
+.game-map-overlay > span,
+.game-runtime-status,
+.adventure-notice button {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.dpad button {
+  background: var(--panel-soft);
+}
+
+.action-button {
+  background: rgba(92, 67, 31, 0.72);
+}
+
+.dialogue-backdrop,
+.completion-backdrop {
+  background: rgba(2, 8, 5, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+.dialogue-panel,
+.completion-panel {
+  border-color: var(--line-strong);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.32);
+}
+
+.dialogue-panel h2,
+.completion-panel h2,
+.quest-panel h1 {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.dialogue-skills span,
+.guide-steps li,
+.journal-quest {
+  border-color: var(--line);
+  border-radius: 8px;
+  background: var(--panel-soft);
+}
+
+/* Phone: retain density without shrinking text or hiding the portrait. */
+@media (max-width: 800px) {
+  .landing-shell {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .landing-header {
+    top: 12px;
+    right: 12px;
+    left: auto;
+  }
+
+  .hero {
+    padding-top: 32px;
+  }
+
+  .hero h1 {
+    max-width: calc(100% - 92px);
+    font-size: clamp(2.35rem, 11vw, 3.2rem);
+    line-height: 0.98;
+  }
+
+  .landing-portrait {
+    width: clamp(88px, 24vw, 108px);
+    margin-block: 4px 0;
+  }
+
+  .mode-grid {
+    gap: 12px;
+  }
+
+  .mode-card {
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .mode-card::after {
+    right: 16px;
+    bottom: 16px;
+    width: 64px;
+    height: 32px;
+  }
+
+  .classic-sidebar {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 68px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 12px 16px;
+  }
+
+  .classic-shell {
+    grid-template: auto minmax(0, 1fr) / 1fr;
+  }
+
+  .profile-intro-copy {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .classic-mobile-ribbon {
+    gap: 4px;
+    border-bottom-color: var(--line);
+    background: rgba(7, 16, 12, 0.98);
+    padding: 8px 12px;
+  }
+
+  .classic-mobile-ribbon button,
+  .classic-ribbon-adventure {
+    min-height: 40px;
+    border-color: transparent;
+    border-radius: 8px;
+    background: transparent;
+    padding-inline: 10px;
+    font-weight: 500;
+  }
+
+  .classic-mobile-ribbon button:hover,
+  .classic-mobile-ribbon button:focus-visible,
+  .classic-mobile-ribbon button.is-active {
+    border-color: var(--line);
+    background: var(--surface-raised);
+  }
+
+  .classic-scroll,
+  .classic-scroll.is-interests {
+    padding: 24px 16px max(24px, env(safe-area-inset-bottom));
+  }
+
+  .profile-intro h1 {
+    font-size: clamp(2.1rem, 10vw, 3rem);
+  }
+
+  .profile-intro-copy > p:not(.section-index) {
+    font-size: 1rem;
+  }
+
+  .profile-portrait {
+    width: min(136px, 38vw);
+    margin: 12px auto;
+  }
+
+  .content-card,
+  .experience-panel,
+  .interest-showcase {
+    padding: 20px;
+  }
+
+  .classic-section::after,
+  .link-section::after {
+    width: 72px;
+  }
+
+  .adventure-shell {
+    padding: 8px 10px 10px;
+  }
+
+  .quest-panel {
+    border-radius: 0 10px 10px 0;
+  }
+}
+
+@media (max-width: 400px) {
+  .landing-shell {
+    padding-inline: 12px;
+  }
+
+  .hero h1 {
+    font-size: 2.3rem;
+  }
+
+  .mode-card {
+    padding: 14px;
+  }
+
+  .mode-card h2 {
+    font-size: 1.45rem;
+  }
+}
