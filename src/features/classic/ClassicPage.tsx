@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { portfolio } from '../../content/portfolio.data'
 import { getSkillLabel, localize } from '../../content/selectors'
@@ -56,6 +56,9 @@ const copy = {
     contact: 'Contact',
     reader: 'Contenu du portfolio',
     sectionNavigation: 'Navigation des sections',
+    pagination: 'Navigation entre les catégories',
+    previousCategory: 'Catégorie précédente',
+    nextCategory: 'Catégorie suivante',
     milestone: 'Recommandation professionnelle',
     metaTitle: 'Willy Somkhit — Ingénieur logiciel | Portfolio',
   },
@@ -91,6 +94,9 @@ const copy = {
     contact: 'Contact',
     reader: 'Portfolio content',
     sectionNavigation: 'Section navigation',
+    pagination: 'Category navigation',
+    previousCategory: 'Previous category',
+    nextCategory: 'Next category',
     milestone: 'Professional recommendation',
     metaTitle: 'Willy Somkhit — Software Engineer | Portfolio',
   },
@@ -107,6 +113,19 @@ const sectionIds = [
   'contact',
 ] as const
 type SectionId = typeof sectionIds[number]
+
+const SECTION_SWIPE_DISTANCE = 64
+const SECTION_SWIPE_AXIS_RATIO = 1.35
+const sectionSwipeExclusionSelector = [
+  'a',
+  'button',
+  'input',
+  'select',
+  'textarea',
+  'video',
+  '.interest-picker',
+  '.interest-carousel',
+].join(',')
 
 const interestIcons: Record<string, ClassicIconName> = {
   climbing: 'climbing',
@@ -161,6 +180,11 @@ export function ClassicPage() {
   const contentRef = useRef<HTMLDivElement>(null)
   const mobileRibbonRef = useRef<HTMLElement>(null)
   const carouselPointerStartX = useRef<number | null>(null)
+  const sectionSwipeStart = useRef<{
+    pointerId: number
+    x: number
+    y: number
+  } | null>(null)
   const skillGroups: Array<{
     id: 'language' | 'framework' | 'domain' | 'tool'
     label: string
@@ -209,6 +233,34 @@ export function ClassicPage() {
     setActiveSectionId(sectionId)
     contentRef.current?.scrollTo?.({ top: 0 })
     window.history.replaceState(null, '', `#${sectionId}`)
+  }
+
+  const activeSectionIndex = sectionIds.indexOf(activeSectionId)
+  const previousSection = navigationItems[activeSectionIndex - 1]
+  const nextSection = navigationItems[activeSectionIndex + 1]
+
+  const beginSectionSwipe = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'mouse') return
+    if (event.target instanceof Element && event.target.closest(sectionSwipeExclusionSelector)) return
+    sectionSwipeStart.current = {
+      pointerId: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+    }
+  }
+
+  const finishSectionSwipe = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const start = sectionSwipeStart.current
+    sectionSwipeStart.current = null
+    if (!start || start.pointerId !== event.pointerId) return
+
+    const horizontalDistance = event.clientX - start.x
+    const verticalDistance = event.clientY - start.y
+    if (Math.abs(horizontalDistance) < SECTION_SWIPE_DISTANCE) return
+    if (Math.abs(horizontalDistance) < Math.abs(verticalDistance) * SECTION_SWIPE_AXIS_RATIO) return
+
+    if (horizontalDistance < 0 && nextSection) selectSection(nextSection.id)
+    if (horizontalDistance > 0 && previousSection) selectSection(previousSection.id)
   }
 
   const activeSectionLabel = navigationItems.find(({ id }) => id === activeSectionId)?.label ?? text.about
@@ -334,6 +386,11 @@ export function ClassicPage() {
           tabIndex={0}
           aria-label={`${text.reader} — ${activeSectionLabel}`}
           aria-live="polite"
+          onPointerDown={beginSectionSwipe}
+          onPointerUp={finishSectionSwipe}
+          onPointerCancel={() => {
+            sectionSwipeStart.current = null
+          }}
         >
           {activeSectionId === 'about' && (
             <>
@@ -692,6 +749,37 @@ export function ClassicPage() {
               </div>
             </section>
           )}
+
+          <nav className="classic-section-pagination" aria-label={text.pagination}>
+            {previousSection && (
+              <button
+                type="button"
+                className="classic-section-step is-previous"
+                aria-label={`${text.previousCategory}: ${previousSection.label}`}
+                onClick={() => selectSection(previousSection.id)}
+              >
+                <ClassicIcon name="chevron-left" />
+                <span>
+                  <small>{text.previousCategory}</small>
+                  <strong>{previousSection.label}</strong>
+                </span>
+              </button>
+            )}
+            {nextSection && (
+              <button
+                type="button"
+                className="classic-section-step is-next"
+                aria-label={`${text.nextCategory}: ${nextSection.label}`}
+                onClick={() => selectSection(nextSection.id)}
+              >
+                <span>
+                  <small>{text.nextCategory}</small>
+                  <strong>{nextSection.label}</strong>
+                </span>
+                <ClassicIcon name="chevron-right" />
+              </button>
+            )}
+          </nav>
         </div>
       </section>
     </main>

@@ -4323,6 +4323,79 @@ a:focus-visible {
   background: var(--panel-soft);
 }
 
+.classic-scroll {
+  touch-action: pan-y;
+}
+
+.classic-section-pagination {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  margin-top: 40px;
+  padding-top: 24px;
+}
+
+.classic-section-step {
+  display: flex;
+  width: 100%;
+  min-height: 64px;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(7, 16, 12, 0.48);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 12px 16px;
+  text-align: left;
+  transition:
+    background-color 160ms var(--ease-out),
+    border-color 160ms var(--ease-out),
+    color 160ms var(--ease-out),
+    transform 160ms var(--ease-out);
+}
+
+.classic-section-step:hover,
+.classic-section-step:focus-visible {
+  border-color: var(--line-strong);
+  background: var(--surface-raised);
+}
+
+.classic-section-step:active {
+  transform: scale(0.98);
+}
+
+.classic-section-step.is-next {
+  grid-column: 2;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.classic-section-step span,
+.classic-section-step small,
+.classic-section-step strong {
+  display: block;
+}
+
+.classic-section-step small {
+  color: var(--muted);
+  font: 400 12px/16px 'Space Mono', monospace;
+}
+
+.classic-section-step strong {
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.classic-section-step .classic-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--leaf);
+}
+
 /* Phone: retain density without shrinking text or hiding the portrait. */
 @media (max-width: 800px) {
   .landing-shell {
@@ -4415,6 +4488,27 @@ a:focus-visible {
   .classic-scroll,
   .classic-scroll.is-interests {
     padding: 24px 16px max(24px, env(safe-area-inset-bottom));
+  }
+
+  .classic-section-pagination {
+    gap: 8px;
+    margin-top: 32px;
+    padding-top: 20px;
+  }
+
+  .classic-section-step {
+    min-height: 60px;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .classic-section-step small {
+    font-size: 11px;
+  }
+
+  .classic-section-step strong {
+    font-size: 13px;
+    line-height: 18px;
   }
 
   .profile-intro h1 {

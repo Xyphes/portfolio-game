@@ -70,6 +70,41 @@ describe('ClassicPage category navigation', () => {
     expect(window.location.hash).toBe('#skills')
   })
 
+  it('navigates between adjacent categories with the footer controls', () => {
+    renderClassicPage()
+
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Category navigation' }))
+      .getByRole('button', { name: 'Next category: Skills' }))
+
+    expect(screen.getByRole('heading', { name: 'Programming languages' })).toBeInTheDocument()
+    expect(window.location.hash).toBe('#skills')
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Category navigation' }))
+      .getByRole('button', { name: 'Previous category: About' }))
+    expect(screen.getByRole('heading', { name: 'Full-stack Software Engineer' })).toBeInTheDocument()
+  })
+
+  it('changes category with a horizontal touch swipe and ignores gallery swipes', () => {
+    renderClassicPage()
+    let content = screen.getByRole('region', { name: /Portfolio content/ })
+
+    fireEvent.pointerDown(content, { pointerId: 1, pointerType: 'touch', clientX: 300, clientY: 120 })
+    fireEvent.pointerUp(content, { pointerId: 1, pointerType: 'touch', clientX: 180, clientY: 126 })
+    expect(screen.getByRole('heading', { name: 'Programming languages' })).toBeInTheDocument()
+
+    content = screen.getByRole('region', { name: /Portfolio content/ })
+    fireEvent.pointerDown(content, { pointerId: 2, pointerType: 'touch', clientX: 100, clientY: 120 })
+    fireEvent.pointerUp(content, { pointerId: 2, pointerType: 'touch', clientX: 220, clientY: 126 })
+    expect(screen.getByRole('heading', { name: 'Full-stack Software Engineer' })).toBeInTheDocument()
+
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Main navigation' }))
+      .getByRole('button', { name: 'Beyond code' }))
+    const gallery = screen.getByRole('region', { name: 'Photo and video gallery — Climbing' })
+    fireEvent.pointerDown(gallery, { pointerId: 3, pointerType: 'touch', clientX: 300, clientY: 120 })
+    fireEvent.pointerUp(gallery, { pointerId: 3, pointerType: 'touch', clientX: 180, clientY: 126 })
+    expect(screen.getByRole('heading', { name: 'Climbing' })).toBeInTheDocument()
+    expect(window.location.hash).toBe('#interests')
+  })
+
   it('renders decorative icons for skills, interests, downloads, and contact methods', () => {
     const { container } = renderClassicPage('#skills')
     const navigation = screen.getByRole('navigation', { name: 'Main navigation' })
