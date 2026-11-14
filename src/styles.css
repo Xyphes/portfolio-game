@@ -4396,6 +4396,88 @@ a:focus-visible {
   color: var(--leaf);
 }
 
+.classic-end-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.classic-end-adventure {
+  display: flex;
+  min-height: 76px;
+  flex: 1 1 520px;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  background: var(--gold);
+  color: #10150d;
+  padding: 20px 24px;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 160ms var(--ease-out),
+    border-color 160ms var(--ease-out),
+    transform 160ms var(--ease-out);
+}
+
+.classic-end-adventure span {
+  flex: 1;
+}
+
+.classic-end-adventure .classic-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.classic-end-adventure:hover,
+.classic-end-adventure:focus-visible {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #10150d;
+}
+
+.classic-end-adventure:active,
+.classic-copy-link:active {
+  transform: scale(0.98);
+}
+
+.classic-copy-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  transition:
+    background-color 160ms var(--ease-out),
+    border-color 160ms var(--ease-out),
+    transform 160ms var(--ease-out);
+}
+
+.classic-copy-link:hover,
+.classic-copy-link:focus-visible {
+  border-color: var(--line-strong);
+  background: var(--panel-soft);
+}
+
+.classic-copy-link .classic-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--leaf);
+}
+
 /* Phone: retain density without shrinking text or hiding the portrait. */
 @media (max-width: 800px) {
   .landing-shell {
@@ -4509,6 +4591,18 @@ a:focus-visible {
   .classic-section-step strong {
     font-size: 13px;
     line-height: 18px;
+  }
+
+  .classic-end-actions {
+    align-items: flex-start;
+    margin-top: 16px;
+  }
+
+  .classic-end-adventure {
+    min-height: 72px;
+    flex-basis: 100%;
+    padding: 16px;
+    font-size: 1.1rem;
   }
 
   .profile-intro h1 {

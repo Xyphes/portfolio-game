@@ -59,6 +59,8 @@ const copy = {
     pagination: 'Navigation entre les catégories',
     previousCategory: 'Catégorie précédente',
     nextCategory: 'Catégorie suivante',
+    copyLink: 'Copier le lien',
+    linkCopied: 'Lien copié',
     milestone: 'Recommandation professionnelle',
     metaTitle: 'Willy Somkhit — Ingénieur logiciel | Portfolio',
   },
@@ -97,6 +99,8 @@ const copy = {
     pagination: 'Category navigation',
     previousCategory: 'Previous category',
     nextCategory: 'Next category',
+    copyLink: 'Copy link',
+    linkCopied: 'Link copied',
     milestone: 'Professional recommendation',
     metaTitle: 'Willy Somkhit — Software Engineer | Portfolio',
   },
@@ -177,9 +181,11 @@ export function ClassicPage() {
   const [activeSectionId, setActiveSectionId] = useState<SectionId>(() => getHashSection() ?? 'about')
   const [activeInterestId, setActiveInterestId] = useState(() => portfolio.interests[0]?.id ?? '')
   const [activeMediaIndex, setActiveMediaIndex] = useState(0)
+  const [isLinkCopied, setIsLinkCopied] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
   const mobileRibbonRef = useRef<HTMLElement>(null)
   const carouselPointerStartX = useRef<number | null>(null)
+  const linkCopyResetTimer = useRef<number | null>(null)
   const sectionSwipeStart = useRef<{
     pointerId: number
     x: number
@@ -262,6 +268,21 @@ export function ClassicPage() {
     if (horizontalDistance < 0 && nextSection) selectSection(nextSection.id)
     if (horizontalDistance > 0 && previousSection) selectSection(previousSection.id)
   }
+
+  const copyCurrentLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setIsLinkCopied(true)
+      if (linkCopyResetTimer.current !== null) window.clearTimeout(linkCopyResetTimer.current)
+      linkCopyResetTimer.current = window.setTimeout(() => setIsLinkCopied(false), 2000)
+    } catch {
+      setIsLinkCopied(false)
+    }
+  }
+
+  useEffect(() => () => {
+    if (linkCopyResetTimer.current !== null) window.clearTimeout(linkCopyResetTimer.current)
+  }, [])
 
   const activeSectionLabel = navigationItems.find(({ id }) => id === activeSectionId)?.label ?? text.about
   const activeInterest = portfolio.interests.find(({ id }) => id === activeInterestId) ?? portfolio.interests[0]
@@ -780,6 +801,22 @@ export function ClassicPage() {
               </button>
             )}
           </nav>
+
+          <div className="classic-end-actions">
+            <Link
+              className="classic-end-adventure"
+              to={`/${routeLocale}/adventure`}
+              onClick={prepareAdventureOrientation}
+            >
+              <ClassicIcon name="rocket" />
+              <span>{text.adventure}</span>
+              <ClassicIcon name="chevron-right" />
+            </Link>
+            <button type="button" className="classic-copy-link" onClick={copyCurrentLink}>
+              <ClassicIcon name="link" />
+              <span>{isLinkCopied ? text.linkCopied : text.copyLink}</span>
+            </button>
+          </div>
         </div>
       </section>
     </main>

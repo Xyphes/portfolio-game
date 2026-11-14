@@ -83,6 +83,22 @@ describe('ClassicPage category navigation', () => {
     expect(screen.getByRole('heading', { name: 'Full-stack Software Engineer' })).toBeInTheDocument()
   })
 
+  it('offers a prominent adventure action and copies the current category link', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    })
+    renderClassicPage('#contact')
+
+    expect(document.querySelector('.classic-end-adventure'))
+      .toHaveAttribute('href', '/en/adventure')
+    fireEvent.click(screen.getByRole('button', { name: 'Copy link' }))
+
+    expect(writeText).toHaveBeenCalledWith(window.location.href)
+    expect(await screen.findByText('Link copied')).toBeInTheDocument()
+  })
+
   it('changes category with a horizontal touch swipe and ignores gallery swipes', () => {
     renderClassicPage()
     let content = screen.getByRole('region', { name: /Portfolio content/ })

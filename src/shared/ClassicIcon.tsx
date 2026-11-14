@@ -24,6 +24,7 @@ export type ClassicIconName =
   | 'rocket'
   | 'file'
   | 'external'
+  | 'link'
   | 'chevron-left'
   | 'chevron-right'
 
@@ -95,6 +96,8 @@ export function ClassicIcon({ name }: ClassicIconProps) {
       return <svg {...commonProps}><path d="M6 3h8l4 4v14H6V3Z" /><path d="M14 3v5h4M9 13h6M9 17h6" /></svg>
     case 'external':
       return <svg {...commonProps}><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 13v6H5V6h6" /></svg>
+    case 'link':
+      return <svg {...commonProps}><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1" /><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1" /></svg>
     case 'chevron-left':
       return <svg {...commonProps}><path d="m15 18-6-6 6-6" /></svg>
     case 'chevron-right':
